@@ -28,8 +28,3 @@ Emotion detection analyzes facial state
 Attendance is marked (temporary)
 GPS tracking starts after attendance window
 If student remains within location → attendance finalized
-Otherwise → attendance cancelled[assistant_logic.py](https://github.com/user-attachments/files/26611470/assistant_logic.py)
-[database.py](https://github.com/user-attachments/files/26611457/database.py)
-[requirements.txt](https://github.com/user-attachments/files/26611443/requirements.txt)
-[app.py](https://github.com/user-attachments/files/26611362/app.py)
-[app.js](https://github.com/user-attachments/files/26611343/app.js)
