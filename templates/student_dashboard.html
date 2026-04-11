@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        {% set student_page_heading = "Hi " ~ student.name %}
+        {% set student_page_description = "Your attendance summary, assistant, and quick links are kept here. Open the dedicated pages for attendance, schedule, analytics, history, and corrections." %}
+        {% include "student/_hero.html" %}
+
+        {% include "student/_assistant_panel.html" %}
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">QUICK ACTIONS</p>
+                            <h3 class="panel-title mb-1">Student workspace</h3>
+                            <p class="meta-line mb-0">Use these shortcuts instead of loading every section in one long page.</p>
+                        </div>
+                        <span class="legend-chip legend-present">Focused Pages</span>
+                    </div>
+                    <div class="admin-quick-grid">
+                        <a href="{{ url_for('student_self_attendance') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Self Attendance</h3>
+                            <p>Face, GPS, attendance marking, and tracking status.</p>
+                        </a>
+                        <a href="{{ url_for('student_schedule_page') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Weekly Class Schedule</h3>
+                            <p>Your weekly classes with date-wise schedule loading.</p>
+                        </a>
+                        <a href="{{ url_for('student_history_page') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Class Session History</h3>
+                            <p>View class history after the safe reset point.</p>
+                        </a>
+                        <a href="{{ url_for('student_analytics_page') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Personal Analytics</h3>
+                            <p>Attendance percentage, charts, and subject breakdown.</p>
+                        </a>
+                        <a href="{{ url_for('student_corrections_page') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Correction Requests</h3>
+                            <p>Submit and track your attendance correction requests.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <div class="panel-card reveal-section h-100">
+                    <p class="badge-text mb-2">TODAY</p>
+                    <h3 class="panel-title mb-3">Student summary</h3>
+                    <div class="stat-grid student-stat-grid">
+                        <div class="stat-box">
+                            <h4>Total Classes</h4>
+                            <p>{{ student_summary.total_classes }}</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Attended</h4>
+                            <p>{{ student_summary.attended_classes }}</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Absent</h4>
+                            <p>{{ student_summary.absent_classes }}</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Attendance %</h4>
+                            <p>{{ student_summary.attendance_percentage }}</p>
+                        </div>
+                    </div>
+                    <div class="admin-highlight-card mt-3">
+                        {% if session_context.current_session %}
+                        <span class="legend-chip legend-present">Active Session</span>
+                        <h4 class="mt-3">{{ session_context.current_session.subject_name }}</h4>
+                        <p>{{ session_context.current_session.session_date }} | {{ session_context.current_session.start_time[:5] }} - {{ session_context.current_session.end_time[:5] }}</p>
+                        <p class="meta-line mb-0">Attendance status: {{ tracking_snapshot.attendance_status if current_session_record else 'Not marked yet' }}</p>
+                        {% elif session_context.upcoming_session %}
+                        <span class="legend-chip legend-upcoming">Upcoming Session</span>
+                        <h4 class="mt-3">{{ session_context.upcoming_session.subject_name }}</h4>
+                        <p>{{ session_context.upcoming_session.session_date }} | {{ session_context.upcoming_session.start_time[:5] }} - {{ session_context.upcoming_session.end_time[:5] }}</p>
+                        <p class="meta-line mb-0">Open window: {{ session_context.upcoming_session.attendance_open_time }} to {{ session_context.upcoming_session.late_close_time }}</p>
+                        {% else %}
+                        <span class="legend-chip legend-neutral">No Active Session</span>
+                        <h4 class="mt-3">You are all caught up</h4>
+                        <p class="meta-line mb-0">Use the schedule page to review upcoming classes.</p>
+                        {% endif %}
+                    </div>
+                    <div class="admin-highlight-card mt-3">
+                        <span class="legend-chip {% if tracking_snapshot.attendance_status == 'CANCELLED' %}legend-absent{% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}legend-present{% elif tracking_snapshot.attendance_status in ['MARKED_PENDING_TRACKING', 'TRACKING_ACTIVE', 'PROVISIONAL'] %}legend-upcoming{% else %}legend-neutral{% endif %}">
+                            {{ tracking_snapshot.attendance_status or 'Tracking Idle' }}
+                        </span>
+                        <h4 class="mt-3">Post-attendance GPS tracker</h4>
+                        <p class="mb-2">{{ tracking_snapshot.message }}</p>
+                        <p class="meta-line mb-1">Tracker: {{ tracking_snapshot.tracking_state or 'Tracking Not Started' }}</p>
+                        <p class="meta-line mb-0">Tracking Time Left: {% if tracking_snapshot.remaining_seconds %}{{ '%02d:%02d:%02d'|format((tracking_snapshot.remaining_seconds // 3600), ((tracking_snapshot.remaining_seconds % 3600) // 60), (tracking_snapshot.remaining_seconds % 60)) }}{% else %}N/A{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

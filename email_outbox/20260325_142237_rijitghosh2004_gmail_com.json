@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "reason": "(535, b'5.7.8 Username and Password not accepted. For more information, go to\\n5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-35c03124a87sm6304601a91.3 - gsmtp')",
+  "to": "rijitghosh2004@gmail.com",
+  "subject": "Student Enrollment Confirmation",
+  "body": "Congratulations, you are enrolled as a new student, 'Rijit Ghosh'.",
+  "saved_at": "2026-03-25 14:22:37"
+}

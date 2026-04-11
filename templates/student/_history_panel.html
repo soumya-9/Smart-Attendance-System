@@ -1,0 +1,40 @@
+<div class="panel-card h-100 reveal-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h3 class="panel-title mb-0">Class Session History</h3>
+            <span class="meta-line">History remains available here only after new session activity is recorded.</span>
+        </div>
+        {% if student_history_reset_at %}
+        <span class="legend-chip legend-neutral">Reset Applied</span>
+        {% endif %}
+    </div>
+
+    {% if student_history_reset_at %}
+    <div class="admin-highlight-card mb-3">
+        <h4 class="mt-0">History was reset safely</h4>
+        <p class="meta-line mb-0">Older class session history entries were cleared from this page on {{ student_history_reset_at.strftime('%Y-%m-%d %H:%M') }}. New records will appear here automatically.</p>
+    </div>
+    {% endif %}
+
+    {% if student_history_records %}
+    <div class="attendance-history">
+        {% for item in student_history_records %}
+        <div class="attendance-history-row">
+            <div>
+                <div class="recognized-person-name">{{ item.date }}</div>
+                <div class="recognized-person-meta">
+                    {{ item.subject_name }} | {{ item.teacher_name }} | {{ item.start_time[:5] }} - {{ item.end_time[:5] }}
+                    {% if item.time %} | Marked: {{ item.time }}{% endif %}
+                    {% if item.emotion %} | Emotion: {{ item.emotion }}{% endif %}
+                </div>
+            </div>
+            <div class="recognized-person-status {{ 'recognized-status-marked' if item.status in ['Present', 'Late'] or item.attendance_status in ['FINALIZED', 'FINAL'] else '' }} {{ 'recognized-status-absent' if item.status == 'Cancelled' or item.attendance_status == 'CANCELLED' else '' }}">
+                {{ item.attendance_status or item.status }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="meta-line mb-0">No class session history is available right now.</p>
+    {% endif %}
+</div>

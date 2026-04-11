@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card dashboard-hero biometric-hero dashboard-animate dashboard-delay-1 mb-4 reveal-section">
+            <div class="dashboard-orb dashboard-orb-one"></div>
+            <div class="dashboard-orb dashboard-orb-two"></div>
+            <div class="hero-scan-ring hero-scan-ring-one"></div>
+            <div class="hero-scan-ring hero-scan-ring-two"></div>
+            <div class="hero-scan-grid"></div>
+            <div class="hero-scan-line"></div>
+            <div class="radar-sweep radar-sweep-admin"></div>
+            <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-4">
+                <div>
+                    <p class="badge-text mb-2">{{ assistant_name|upper }} ADMIN WORKSPACE</p>
+                    <h1 class="main-title mb-2">Admin Dashboard</h1>
+                    <p class="sub-title mb-2">Start from a clean summary, then jump into the exact admin workspace you need for sessions, analytics, overrides, holidays, reports, or settings.</p>
+                    <p class="meta-line mb-0">App URL: {{ app_url }}</p>
+                </div>
+                <div class="status-stack">
+                    <div class="status-box {{ 'status-box-warning' if not engine_state.recognition_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ 'Face recognition ready' if engine_state.recognition_ready else 'Face recognition needs setup' }}</span>
+                    </div>
+                    <div class="status-box {{ 'status-box-warning' if not engine_state.emotion_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ 'Emotion engine ready' if engine_state.emotion_ready else 'Emotion engine needs setup' }}</span>
+                    </div>
+                    <div class="status-box {{ 'status-box-danger' if not gps_tracker_state.is_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ gps_tracker_state.label }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include "admin/_assistant_panel.html" %}
+
+        <div class="admin-metric-grid mb-4 reveal-section">
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">STUDENTS</p>
+                <h3>{{ stats.total_students }}</h3>
+                <p class="meta-line mb-0">Registered students</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">PRESENT</p>
+                <h3>{{ stats.present_count }}</h3>
+                <p class="meta-line mb-0">Marked today</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">ABSENT</p>
+                <h3>{{ stats.absent_count }}</h3>
+                <p class="meta-line mb-0">Pending or auto-marked</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">LATE</p>
+                <h3>{{ stats.late_count }}</h3>
+                <p class="meta-line mb-0">Late arrivals today</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">REJECTED</p>
+                <h3>{{ stats.rejected_count }}</h3>
+                <p class="meta-line mb-0">Validation rejections</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-8">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">QUICK ACTIONS</p>
+                            <h3 class="panel-title mb-1">Focused admin workspaces</h3>
+                            <p class="meta-line mb-0">Use these shortcuts instead of digging through one long dashboard.</p>
+                        </div>
+                        <a href="{{ url_for('register_student') }}" class="btn quick-btn">Register Student</a>
+                    </div>
+                    <div class="admin-quick-grid">
+                        <a href="{{ url_for('registered_students') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Students</h3>
+                            <p>Student list, scanner, graphs, and registration jump-off.</p>
+                        </a>
+                        <a href="{{ url_for('admin_control_panel') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Control Panel</h3>
+                            <p>Create dated class sessions and manage working days and rules.</p>
+                        </a>
+                        <a href="{{ url_for('admin_sessions') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Class Sessions</h3>
+                            <p>Create, edit, time, GPS, and tracking controls for sessions.</p>
+                        </a>
+                        <a href="{{ url_for('admin_analytics') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Attendance Analytics</h3>
+                            <p>Charts, trends, top performers, watchlists, and AI insights.</p>
+                        </a>
+                        <a href="{{ url_for('admin_live_monitor') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Live Session Monitor</h3>
+                            <p>Operational view of active, delayed, and upcoming classes.</p>
+                        </a>
+                        <a href="{{ url_for('admin_overrides') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Overrides</h3>
+                            <p>Temporary override decisions and correction request review.</p>
+                        </a>
+                        <a href="{{ url_for('admin_settings') }}" class="action-card text-decoration-none dashboard-action-card">
+                            <h3>Settings</h3>
+                            <p>SMTP, support utilities, and system-level admin tools.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="panel-card reveal-section h-100">
+                    <p class="badge-text mb-2">SESSION FOCUS</p>
+                    <h3 class="panel-title mb-3">Current classroom snapshot</h3>
+                    {% if current_active_session %}
+                    <div class="admin-highlight-card mb-3">
+                        <span class="legend-chip legend-present">Live Now</span>
+                        <h4 class="mt-3">{{ current_active_session.class_name }} • {{ current_active_session.subject_name }}</h4>
+                        <p>{{ current_active_session.start_time }} - {{ current_active_session.end_time }} | {{ current_active_session.teacher_name }}</p>
+                        <p>Present {{ current_active_session.present_count or 0 }} | Late {{ current_active_session.late_count or 0 }} | Absent {{ current_active_session.absent_count or 0 }}</p>
+                        <p class="meta-line mb-0">{{ current_active_session.status_reason or 'Attendance window setup and dated session creation are available from the Control Panel page.' }}</p>
+                    </div>
+                    {% elif next_session %}
+                    <div class="admin-highlight-card mb-3">
+                        <span class="legend-chip legend-upcoming">Next Session</span>
+                        <h4 class="mt-3">{{ next_session.class_name }} • {{ next_session.subject_name }}</h4>
+                        <p>{{ next_session.start_time }} - {{ next_session.end_time }} | {{ next_session.teacher_name }}</p>
+                        <p class="meta-line mb-0">Open window: {{ next_session.attendance_open_time }} to {{ next_session.late_close_time }}</p>
+                    </div>
+                    {% else %}
+                    <div class="admin-highlight-card mb-3">
+                        <span class="legend-chip legend-neutral">No Live Session</span>
+                        <h4 class="mt-3">No class is running right now</h4>
+                        <p class="meta-line mb-0">Use the Live Session Monitor to review the full day schedule.</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="admin-mini-list">
+                        {% for item in today_sessions[:3] %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                <p>{{ item.start_time[:5] }} - {{ item.end_time[:5] }} | {{ item.teacher_name }}</p>
+                            </div>
+                            <span class="legend-chip {% if item.session_status == 'Active' %}legend-present{% elif item.session_status in ['Scheduled', 'Delayed'] %}legend-upcoming{% elif item.session_status == 'Cancelled' %}legend-absent{% else %}legend-neutral{% endif %}">
+                                {{ item.session_status }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No sessions are scheduled today.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 mb-3">
+                        <h4 class="panel-title h5 mb-0">Live provisional attendance</h4>
+                        <a href="{{ url_for('admin_live_monitor') }}" class="meta-line text-decoration-none">Open live monitor</a>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in active_tracking_rows[:4] %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                                <p>{{ item.class_name }} | {{ item.tracking_state }}</p>
+                                <p class="meta-line mb-0" data-admin-tracking-countdown data-expires-at="{{ item.tracking_expires_at }}">
+                                    Tracking Time Left: {% if item.remaining_seconds %}{{ '%02d:%02d:%02d'|format((item.remaining_seconds // 3600), ((item.remaining_seconds % 3600) // 60), (item.remaining_seconds % 60)) }}{% else %}N/A{% endif %}
+                                </p>
+                            </div>
+                            <span class="legend-chip legend-upcoming">{{ item.attendance_status }}</span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No student is under active provisional GPS tracking right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">SUMMARY CHARTS</p>
+                            <h3 class="panel-title mb-1">Attendance pulse</h3>
+                            <p class="meta-line mb-0">A compact look at today’s attendance mix and this week’s movement.</p>
+                        </div>
+                        <a href="{{ url_for('admin_analytics') }}" class="btn quick-btn">Open Analytics</a>
+                    </div>
+                    <div class="dashboard-analytics-grid"
+                         data-admin-dashboard-charts
+                         data-stats='{{ stats | tojson | safe }}'
+                         data-weekly-sessions='{{ weekly_sessions | tojson | safe }}'
+                         data-schedules='{{ schedules | tojson | safe }}'>
+                        <div class="analytics-card analytics-card-compact">
+                            <div class="analytics-card-header">
+                                <h4>Status Mix</h4>
+                                <span>Present, late, absent, rejected</span>
+                            </div>
+                            <div class="analytics-canvas-wrap chart-loading-shell">
+                                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                                <canvas data-admin-chart="status-distribution"></canvas>
+                            </div>
+                        </div>
+                        <div class="analytics-card analytics-card-compact">
+                            <div class="analytics-card-header">
+                                <h4>Class-Wise Load</h4>
+                                <span>Attendance by class</span>
+                            </div>
+                            <div class="analytics-canvas-wrap chart-loading-shell">
+                                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                                <canvas data-admin-chart="class-wise"></canvas>
+                            </div>
+                        </div>
+                        <div class="analytics-card analytics-card-compact">
+                            <div class="analytics-card-header">
+                                <h4>Weekly Trend</h4>
+                                <span>{{ stats.recent_dates | join(', ') }}</span>
+                            </div>
+                            <div class="analytics-canvas-wrap chart-loading-shell">
+                                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                                <canvas data-admin-chart="weekly-trend"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <div class="panel-card reveal-section h-100">
+                    <p class="badge-text mb-2">ALERTS</p>
+                    <h3 class="panel-title mb-3">Recent important notifications</h3>
+                    <div class="admin-mini-list mb-4">
+                        {% for item in dashboard_notifications %}
+                        <div class="admin-mini-item admin-alert-item admin-alert-{{ item.level }}">
+                            <div>
+                                <h4>{{ item.title }}</h4>
+                                <p>{{ item.message }}</p>
+                            </div>
+                            <span class="legend-chip {% if item.level == 'danger' %}legend-absent{% elif item.level == 'warning' %}legend-upcoming{% elif item.level == 'success' %}legend-present{% else %}legend-neutral{% endif %}">
+                                {{ item.level|title }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h4 class="panel-title h5 mb-0">Low attendance alerts</h4>
+                        <a href="{{ url_for('admin_analytics') }}" class="meta-line text-decoration-none">View analytics</a>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in stats.low_attendance_students[:4] %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.name }}</h4>
+                                <p>{{ item.class_name }} | {{ item.attendance_percentage }}%</p>
+                            </div>
+                            <span class="legend-chip legend-absent">Alert</span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No student is below the configured threshold right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">EXCEPTIONS</p>
+                            <h3 class="panel-title mb-1">Recent correction requests</h3>
+                            <p class="meta-line mb-0">A quick preview before opening the override management page.</p>
+                        </div>
+                        <a href="{{ url_for('admin_overrides') }}" class="btn quick-btn">Open Overrides</a>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in stats.pending_corrections[:4] %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                                <p>{{ item.session_date }} | Requested {{ item.requested_status }} | {{ item.status }}</p>
+                            </div>
+                            <span class="legend-chip {% if item.status == 'Pending' %}legend-upcoming{% elif item.status == 'Approved' %}legend-present{% else %}legend-absent{% endif %}">
+                                {{ item.status }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No correction requests are waiting right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">ADMIN UTILITIES</p>
+                            <h3 class="panel-title mb-1">Frequently used tools</h3>
+                            <p class="meta-line mb-0">Secondary tools stay available without crowding the main dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="admin-utility-links">
+                        <a href="{{ url_for('register_student') }}" class="admin-utility-link">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>Register Student</span>
+                        </a>
+                        <a href="{{ url_for('camera_debug') }}" class="admin-utility-link">
+                            <i class="bi bi-camera-video-fill"></i>
+                            <span>Camera Debug</span>
+                        </a>
+                        <a href="{{ url_for('admin_reports') }}" class="admin-utility-link">
+                            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                            <span>Reports</span>
+                        </a>
+                        <a href="{{ url_for('admin_holidays') }}" class="admin-utility-link">
+                            <i class="bi bi-calendar-event-fill"></i>
+                            <span>Holidays</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

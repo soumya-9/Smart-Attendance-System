@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Temporary Override Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">TEMPORARY OVERRIDES</p>
+            <h1 class="main-title mb-2">Temporary Override Management</h1>
+            <p class="sub-title mb-0">Grant short attendance overrides, review exception requests, and track active, used, and expired override activity from one cleaner admin page.</p>
+        </div>
+
+        <div class="admin-metric-grid mb-4 reveal-section">
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">ACTIVE</p>
+                <h3>{{ active_overrides|length }}</h3>
+                <p class="meta-line mb-0">Overrides still valid</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">USED</p>
+                <h3>{{ used_overrides|length }}</h3>
+                <p class="meta-line mb-0">Consumed overrides</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">EXPIRED</p>
+                <h3>{{ expired_overrides|length }}</h3>
+                <p class="meta-line mb-0">Expired permissions</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">CORRECTIONS</p>
+                <h3>{{ correction_requests|length }}</h3>
+                <p class="meta-line mb-0">Requests in queue</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-5">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">GRANT OVERRIDE</p>
+                            <h3 class="panel-title mb-1">Temporary student-specific override</h3>
+                            <p class="meta-line mb-0">This keeps the current 5-minute override behavior and existing logic intact.</p>
+                        </div>
+                        <span class="legend-chip legend-upcoming">5 minutes</span>
+                    </div>
+                    <form method="post" action="{{ url_for('create_override') }}" class="form-grid">
+                        <input type="hidden" name="next" value="{{ url_for('admin_overrides') }}">
+                        <select name="student_id" class="form-select form-input" required>
+                            <option value="">Select student</option>
+                            {% for student in stats.students %}
+                            <option value="{{ student.id }}">{{ student.name }} ({{ student.class_name }})</option>
+                            {% endfor %}
+                        </select>
+                        <select name="session_id" class="form-select form-input" required>
+                            <option value="">Select session</option>
+                            {% for item in weekly_sessions %}
+                            <option value="{{ item.id }}">{{ item.session_date }} | {{ item.class_name }} | {{ item.subject_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <textarea name="reason" class="form-control form-input" rows="3" placeholder="Reason for 5-minute override" required></textarea>
+                        <button class="btn send-btn" type="submit">Grant Override</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Correction requests</h3>
+                        <span class="meta-line">Main exception-handling queue</span>
+                    </div>
+                    <div class="student-list">
+                        {% for item in correction_requests %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                                    <p>{{ item.session_date }} | Requested: {{ item.requested_status }} | Status: {{ item.status }}</p>
+                                    <p>{{ item.reason }}</p>
+                                </div>
+                                {% if item.status == 'Pending' %}
+                                <form method="post" action="{{ url_for('review_correction', correction_id=item.id) }}" class="edit-student-form">
+                                    <input type="hidden" name="next" value="{{ url_for('admin_overrides') }}">
+                                    <textarea name="admin_notes" class="form-control form-input" rows="2" placeholder="Admin notes"></textarea>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn send-btn" type="submit" name="decision" value="Approved">Approve</button>
+                                        <button class="btn delete-btn" type="submit" name="decision" value="Rejected">Reject</button>
+                                    </div>
+                                </form>
+                                {% else %}
+                                <span class="legend-chip {% if item.status == 'Approved' %}legend-present{% else %}legend-absent{% endif %}">{{ item.status }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No correction requests yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-4">
+                <div class="panel-card reveal-section h-100">
+                    <h3 class="panel-title mb-3">Active overrides</h3>
+                    <div class="student-list">
+                        {% for item in active_overrides %}
+                        <div class="student-item">
+                            <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                            <p>{{ item.class_name }} | {{ item.session_date }}</p>
+                            <p>Granted: {{ item.granted_at }} | Expires: {{ item.expires_at }}</p>
+                            <p>{{ item.reason }}</p>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No active overrides right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="panel-card reveal-section h-100">
+                    <h3 class="panel-title mb-3">Used overrides</h3>
+                    <div class="student-list">
+                        {% for item in used_overrides %}
+                        <div class="student-item">
+                            <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                            <p>{{ item.class_name }} | {{ item.session_date }}</p>
+                            <p>Granted: {{ item.granted_at }}</p>
+                            <p>{{ item.reason }}</p>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No used overrides yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="panel-card reveal-section h-100">
+                    <h3 class="panel-title mb-3">Expired overrides</h3>
+                    <div class="student-list">
+                        {% for item in expired_overrides %}
+                        <div class="student-item">
+                            <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                            <p>{{ item.class_name }} | {{ item.session_date }}</p>
+                            <p>Expired: {{ item.expires_at }}</p>
+                            <p>{{ item.reason }}</p>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No expired overrides right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

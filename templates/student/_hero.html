@@ -1,0 +1,32 @@
+<div class="hero-card biometric-hero student-hero mb-4 reveal-section">
+    <div class="hero-scan-ring hero-scan-ring-one"></div>
+    <div class="hero-scan-ring hero-scan-ring-two"></div>
+    <div class="hero-scan-grid"></div>
+    <div class="hero-scan-line"></div>
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div>
+            <p class="badge-text mb-2">STUDENT PORTAL</p>
+            <h1 class="main-title mb-2">{{ student_page_heading or student.name }}</h1>
+            <p class="sub-title mb-2">{{ student_page_description or ('Class: ' ~ student.class_name ~ ' | Enrollment: ' ~ student.enrollment_number) }}</p>
+            <p class="meta-line mb-0">Email: {{ student.email }}</p>
+        </div>
+        <div class="status-stack">
+            <div class="status-box {{ 'status-box-warning' if not engine_state.recognition_ready else '' }}">
+                <div class="status-dot"></div>
+                <span>{{ 'Face recognition ready' if engine_state.recognition_ready else 'Face recognition not ready' }}</span>
+            </div>
+            <div class="status-box {{ 'status-box-warning' if not engine_state.emotion_ready else '' }}">
+                <div class="status-dot"></div>
+                <span>{{ 'Emotion engine ready' if engine_state.emotion_ready else 'Emotion engine not ready' }}</span>
+            </div>
+            <div class="status-box {{ 'status-box-warning' if not engine_state.anti_spoof_ready else '' }}">
+                <div class="status-dot"></div>
+                <span>{{ 'Anti spoof engine ready' if engine_state.anti_spoof_ready else 'Anti spoof engine not ready' }}</span>
+            </div>
+            <div class="status-box {{ 'status-box-danger' if not gps_tracker_state.is_ready else '' }}">
+                <div class="status-dot"></div>
+                <span>{{ gps_tracker_state.label }}</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Weekly Class Schedule{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        {% set student_page_heading = "Weekly Class Schedule" %}
+        {% set student_page_description = "Review your weekly classes without mixing them into the main dashboard." %}
+        {% include "student/_hero.html" %}
+        {% include "student/_schedule_panel.html" %}
+    </div>
+</div>
+{% endblock %}

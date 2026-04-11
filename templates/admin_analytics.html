@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">ATTENDANCE ANALYTICS</p>
+            <h1 class="main-title mb-2">Attendance Analytics</h1>
+            <p class="sub-title mb-0">Charts, trend lines, class performance, low-attendance watchlists, and AI-assisted attendance insight all live here now.</p>
+        </div>
+
+        <div class="admin-metric-grid mb-4 reveal-section">
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">OVERALL ATTENDANCE</p>
+                <h3>{{ ((stats.present_count + stats.late_count) / ((stats.present_count + stats.late_count + stats.absent_count + stats.rejected_count) or 1) * 100)|round(1) }}%</h3>
+                <p class="meta-line mb-0">Present + late today</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">WATCHLIST</p>
+                <h3>{{ stats.low_attendance_students|length }}</h3>
+                <p class="meta-line mb-0">Students below threshold</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">CLASSES TRACKED</p>
+                <h3>{{ stats.class_wise_stats|length }}</h3>
+                <p class="meta-line mb-0">Class groups in analytics</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">LATE RECORDS</p>
+                <h3>{{ stats.late_count }}</h3>
+                <p class="meta-line mb-0">Late marks today</p>
+            </div>
+        </div>
+
+        <div class="panel-card mb-4 reveal-section">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="badge-text mb-2">CHART CENTER</p>
+                    <h3 class="panel-title mb-1">Detailed attendance visualizations</h3>
+                    <p class="meta-line mb-0">These charts reuse the current analytics data and keep the main dashboard lighter.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('admin_reports') }}" class="btn quick-btn">Open Reports</a>
+                    <a href="{{ url_for('export_reports') }}" class="btn send-btn">Download CSV</a>
+                </div>
+            </div>
+            <div class="dashboard-analytics-grid"
+                 data-admin-dashboard-charts
+                 data-stats='{{ stats | tojson | safe }}'
+                 data-weekly-sessions='{{ weekly_sessions | tojson | safe }}'
+                 data-schedules='{{ schedules | tojson | safe }}'>
+                <div class="analytics-card">
+                    <div class="analytics-card-header">
+                        <h4>Status Distribution</h4>
+                        <span>Present, late, absent, rejected</span>
+                    </div>
+                    <div class="analytics-canvas-wrap chart-loading-shell">
+                        <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                        <canvas data-admin-chart="status-distribution"></canvas>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card-header">
+                        <h4>Subject-Wise</h4>
+                        <span>Sessions per subject</span>
+                    </div>
+                    <div class="analytics-canvas-wrap chart-loading-shell">
+                        <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                        <canvas data-admin-chart="subject-wise"></canvas>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card-header">
+                        <h4>Class-Wise</h4>
+                        <span>Present + late by class</span>
+                    </div>
+                    <div class="analytics-canvas-wrap chart-loading-shell">
+                        <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                        <canvas data-admin-chart="class-wise"></canvas>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card-header">
+                        <h4>Weekly Trend</h4>
+                        <span>{{ stats.recent_dates | join(', ') }}</span>
+                    </div>
+                    <div class="analytics-canvas-wrap chart-loading-shell">
+                        <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                        <canvas data-admin-chart="weekly-trend"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Top attendance students</h3>
+                        <span class="meta-line">Best recent attendance percentages</span>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in top_attendance_students %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.name }}</h4>
+                                <p>{{ item.class_name }} | {{ item.attendance }}/{{ item.total_classes }} classes</p>
+                            </div>
+                            <span class="legend-chip legend-present">{{ item.percentage }}%</span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">Analytics will appear once attendance data is available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Low attendance students</h3>
+                        <span class="meta-line">Students who need intervention</span>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in stats.low_attendance_students %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.name }}</h4>
+                                <p>{{ item.class_name }} | {{ item.attended_classes }}/{{ item.total_classes }} classes</p>
+                            </div>
+                            <span class="legend-chip legend-absent">{{ item.attendance_percentage }}%</span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No student is below the configured threshold right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include "admin/_assistant_panel.html" %}
+    </div>
+</div>
+{% endblock %}

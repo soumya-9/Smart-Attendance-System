@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">SETTINGS</p>
+            <h1 class="main-title mb-2">Admin Settings</h1>
+            <p class="sub-title mb-0">Email delivery, support tools, and system utilities stay here, while academic rules and dated session creation now live in the dedicated Control Panel page.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                {% include "admin/_smtp_settings_form.html" %}
+            </div>
+            <div class="col-xl-4">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">UTILITY TOOLS</p>
+                            <h3 class="panel-title mb-1">Support and setup shortcuts</h3>
+                            <p class="meta-line mb-0">Important secondary tools stay available here instead of in the main sidebar.</p>
+                        </div>
+                    </div>
+                    <div class="admin-utility-links">
+                        <a href="{{ url_for('admin_control_panel') }}" class="admin-utility-link">
+                            <i class="bi bi-sliders"></i>
+                            <span>Control Panel</span>
+                        </a>
+                        <a href="{{ url_for('register_student') }}" class="admin-utility-link">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>Register Student</span>
+                        </a>
+                        <a href="{{ url_for('camera_debug') }}" class="admin-utility-link">
+                            <i class="bi bi-camera-video-fill"></i>
+                            <span>Camera Debug</span>
+                        </a>
+                        <a href="{{ url_for('admin_sessions') }}" class="admin-utility-link">
+                            <i class="bi bi-calendar2-week-fill"></i>
+                            <span>Session Controls</span>
+                        </a>
+                        <a href="{{ url_for('admin_reports') }}" class="admin-utility-link">
+                            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                            <span>Reports</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

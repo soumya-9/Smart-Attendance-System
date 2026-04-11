@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Student Login{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="panel-card login-card biometric-login-card reveal-section">
+                    <div class="login-ambient-orb login-ambient-orb-one"></div>
+                    <div class="login-ambient-orb login-ambient-orb-two"></div>
+                    <div class="hero-scan-grid login-scan-grid"></div>
+                    <div class="hero-scan-ring hero-scan-ring-one"></div>
+                    <div class="hero-scan-ring hero-scan-ring-two"></div>
+                    <div class="hero-scan-line login-scan-line"></div>
+                    <p class="badge-text mb-2">STUDENT ACCESS</p>
+                    <h1 class="main-title mb-2">Student Login</h1>
+                    <p class="sub-title mb-4">Use your registered email ID and enrollment number to see your attendance, absence days, and total classes attended.</p>
+
+                    <form method="post" class="form-grid">
+                        <div>
+                            <label class="form-label">Student Email</label>
+                            <input type="email" name="email" class="form-control form-input" placeholder="Enter student email" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Enrollment Number</label>
+                            <input type="text" name="enrollment_number" class="form-control form-input" placeholder="Enter enrollment number" required>
+                        </div>
+                        <button class="btn send-btn w-100 mt-2" type="submit">Login</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

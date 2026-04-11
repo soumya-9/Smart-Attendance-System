@@ -1,0 +1,37 @@
+<div class="panel-card assistant-panel reveal-section mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <p class="badge-text mb-2">ADMIN ATTENDANCE ASSISTANT</p>
+            <h3 class="panel-title mb-1">Institution Analytics Assistant</h3>
+            <p class="meta-line mb-0">Attendance-focused local assistant with admin-level analytics access only.</p>
+        </div>
+        <span class="legend-chip legend-present">Local Database Driven</span>
+    </div>
+
+    <div class="assistant-card" data-assistant-role="admin" data-endpoint="{{ url_for('chat') }}">
+        <div class="assistant-chat-glow assistant-chat-glow-one"></div>
+        <div class="assistant-chat-glow assistant-chat-glow-two"></div>
+        <div class="assistant-response" data-assistant-response>
+            <div class="assistant-message-row assistant-message-row-ai">
+                <div class="assistant-avatar assistant-avatar-ai">AI</div>
+                <div class="assistant-message-stack">
+                    <div class="assistant-bubble assistant-bubble-ai">Welcome back, admin. Ask about subject analytics, top attendance students, low attendance students, class-wise analytics, or weekly trends.</div>
+                    <div class="assistant-meta">Smart Attendance System • just now</div>
+                </div>
+            </div>
+        </div>
+        <div class="assistant-quick-actions mt-3">
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Today's attendance summary">Today's Attendance Summary</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Show subject analytics">Subject Analytics</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Show top attendance students">Top Attendance Students</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Which students are below attendance threshold?">Low Attendance Students</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Show class-wise attendance analytics">Class Attendance Chart</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Show attendance trend by week">Weekly Trend</button>
+        </div>
+        <div class="assistant-input-area mt-3">
+            <input type="text" class="form-control form-input assistant-query-input" placeholder="Ask attendance analytics questions...">
+            <button class="btn quick-btn assistant-voice-btn" type="button" aria-label="Start voice input" data-idle-html='<i class="bi bi-mic-fill"></i>' data-listening-html='<i class="bi bi-mic-fill"></i><span class="assistant-voice-state">Listening</span>'><i class="bi bi-mic-fill"></i></button>
+            <button class="btn send-btn assistant-send-btn" type="button">Ask</button>
+        </div>
+    </div>
+</div>

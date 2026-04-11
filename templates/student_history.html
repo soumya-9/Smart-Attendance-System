@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Class Session History{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        {% set student_page_heading = "Class Session History" %}
+        {% set student_page_description = "This page keeps session history separate from your dashboard and respects the safe history reset." %}
+        {% include "student/_hero.html" %}
+        {% include "student/_history_panel.html" %}
+    </div>
+</div>
+{% endblock %}

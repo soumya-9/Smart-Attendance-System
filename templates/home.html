@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Access Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-5 access-portal-shell">
+    <div class="container access-portal-content">
+        <div class="row justify-content-center mb-4">
+            <div class="col-xl-9 col-lg-10">
+                <div class="panel-card text-center access-hero-card">
+                    <p class="badge-text mb-2">ACCESS PORTAL</p>
+            <h1 class="main-title mb-3">{{ assistant_name }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center g-4 login-access-row">
+            <div class="col-lg-5">
+                <div class="panel-card login-card login-access-card">
+                    <p class="badge-text mb-2">ADMIN ACCESS</p>
+                    <h2 class="main-title mb-2">Admin Portal</h2>
+                    <p class="sub-title mb-4">For management, registration, face recognition attendance scans, and dashboard controls.</p>
+                    <a class="btn send-btn w-100 student-access-btn mt-auto" href="{{ url_for('login') }}">Open Admin Login</a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="panel-card login-card login-access-card">
+                    <p class="badge-text mb-2">STUDENT ACCESS</p>
+                    <h2 class="main-title mb-2">Student Portal</h2>
+                    <p class="sub-title mb-4">For students to log in using their registered email and enrollment number and view attendance details.</p>
+                    <a class="btn send-btn w-100 student-access-btn mt-auto" href="{{ url_for('student_login') }}">Open Student Login</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-xl-9 col-lg-10">
+                <div class="panel-card text-center access-hero-card">
+                    <p class="meta-line mb-0">Both portal entry points remain available here: Admin Access and Student Access.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

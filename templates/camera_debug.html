@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Camera Debug{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4">
+            <p class="badge-text mb-2">CAMERA DIAGNOSTICS</p>
+            <h1 class="main-title mb-2">Webcam Debug</h1>
+            <p class="sub-title mb-0">Use this page to check your laptop webcam quality, detected stream resolution, and saved frame clarity.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="panel-card h-100">
+                    <h3 class="panel-title mb-3">Live Camera Feed</h3>
+                    <div class="video-wrapper mb-3">
+                        <video id="debugVideo" class="video-stream" autoplay playsinline muted></video>
+                        <canvas id="debugCanvas" width="1280" height="720" style="display:none;"></canvas>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                        <button class="btn send-btn" id="startDebugCameraBtn" type="button">Start Debug Camera</button>
+                        <button class="btn quick-btn" id="captureDebugFrameBtn" type="button">Capture Test Frame</button>
+                    </div>
+
+                    <div class="result-box">
+                        <p class="mb-2"><strong>Status:</strong> <span id="debugStatus">Camera not started.</span></p>
+                        <div class="engine-status-grid">
+                            <div class="engine-pill" id="debugResolution">Stream Resolution: Unknown</div>
+                            <div class="engine-pill" id="debugVideoSize">Rendered Video: Unknown</div>
+                            <div class="engine-pill" id="debugCanvasSize">Canvas Capture: Unknown</div>
+                            <div class="engine-pill" id="debugPermission">Permission: Waiting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="panel-card mb-4">
+                    <h3 class="panel-title mb-3">Captured Test Frame</h3>
+                    <img id="debugPreview" class="registration-preview debug-preview" src="{{ debug_capture_url }}" alt="Camera debug capture preview">
+                </div>
+
+                <div class="panel-card">
+                    <h3 class="panel-title mb-3">What To Look For</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Class Sessions{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">CLASS SESSIONS</p>
+            <h1 class="main-title mb-2">Session And Timetable Management</h1>
+            <p class="sub-title mb-0">Create dated sessions, manage live windows, update GPS and tracker settings, and keep all session operations in one focused workspace.</p>
+        </div>
+
+        <div class="panel-card weekly-schedule-panel reveal-section h-100 mb-4"
+             data-schedule-role="admin"
+             data-endpoint="{{ url_for('admin_schedule_api') }}"
+             data-selected-date="{{ today_iso }}">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="badge-text mb-2">LIVE OVERVIEW</p>
+                    <h3 class="panel-title mb-1">Weekly session monitor</h3>
+                    <p class="meta-line mb-0">Use this panel to verify current attendance windows before editing detailed session controls below.</p>
+                </div>
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    <a href="{{ url_for('admin_control_panel') }}" class="btn quick-btn">Open Control Panel</a>
+                    <div class="schedule-legend">
+                        <span class="legend-chip legend-upcoming">Upcoming</span>
+                        <span class="legend-chip legend-present">Open</span>
+                        <span class="legend-chip legend-absent">Closed / Cancelled</span>
+                        <span class="legend-chip legend-neutral">Completed</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weekly-calendar-bar mb-3" data-week-bar>
+                {% for day in admin_week_dates %}
+                <button class="week-day-btn {% if day.is_today %}is-selected{% endif %}" type="button" data-date="{{ day.iso_date }}">
+                    <span class="week-day-label">{{ day.day_short }}</span>
+                    <span class="week-day-number">{{ day.day_number }}</span>
+                    <span class="week-day-month">{{ day.month_short }}</span>
+                </button>
+                {% endfor %}
+            </div>
+            <div class="schedule-toolbar mb-3">
+                <input type="text" class="form-control form-input" placeholder="Filter by class or subject..." data-schedule-filter>
+            </div>
+            <div class="schedule-day-shell" data-schedule-body>
+                <div class="schedule-loading">
+                    <div class="schedule-skeleton"></div>
+                    <div class="schedule-skeleton"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Saved dated sessions</h3>
+                        <span class="meta-line">Edit the exact-date sessions already created by admin.</span>
+                    </div>
+                    <div class="student-list mb-4">
+                        {% for item in schedules %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                    <p>{{ item.session_date }} | {{ item.day_name }} | {{ item.start_time[:5] }} - {{ item.end_time[:5] }} | Teacher: {{ item.teacher_name }}</p>
+                                    <p>Room: {{ item.room_name or item.class_name }}</p>
+                                    <p>Attendance Window: {{ item.attendance_open_time[:5] }} - {{ item.attendance_close_time[:5] }} | Late Until {{ item.late_close_time[:5] }}</p>
+                                    <p>GPS: {{ item.gps_latitude if item.gps_latitude is not none else 'Not set' }}, {{ item.gps_longitude if item.gps_longitude is not none else 'Not set' }} | Radius: {{ item.allowed_radius_meters }} m</p>
+                                    <p>Post-Attendance Tracking: {{ item.post_attendance_tracking_minutes if item.post_attendance_tracking_minutes is not none else post_attendance_tracking_default_minutes }} minute(s)</p>
+                                </div>
+                                <div class="student-action-stack">
+                                    <details class="edit-student-panel">
+                                        <summary class="btn edit-btn">Edit Session</summary>
+                                        <form method="post" action="{{ url_for('edit_schedule', schedule_id=item.id) }}" class="edit-student-form">
+                                            <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                            <input name="class_name" class="form-control form-input" value="{{ item.class_name }}" placeholder="Class name" required>
+                                            <input name="subject_name" class="form-control form-input" value="{{ item.subject_name }}" placeholder="Subject" required>
+                                            <input name="teacher_name" class="form-control form-input" value="{{ item.teacher_name }}" placeholder="Teacher" required>
+                                            <input name="room_name" class="form-control form-input" value="{{ item.room_name or '' }}" placeholder="Room / section / lab">
+                                            <input type="date" name="session_date" class="form-control form-input" value="{{ item.session_date }}" required>
+                                            <input type="time" name="start_time" class="form-control form-input" value="{{ item.start_time[:5] }}" required>
+                                            <input type="time" name="end_time" class="form-control form-input" value="{{ item.end_time[:5] }}" required>
+                                            <input type="time" name="attendance_open_time" class="form-control form-input" value="{{ item.attendance_open_time[:5] }}" required>
+                                            <input type="time" name="attendance_close_time" class="form-control form-input" value="{{ item.attendance_close_time[:5] }}" required>
+                                            <input type="time" name="late_close_time" class="form-control form-input" value="{{ item.late_close_time[:5] }}" required>
+                                            <input name="gps_latitude" class="form-control form-input gps-latitude-input" value="{{ item.gps_latitude if item.gps_latitude is not none else '' }}" placeholder="Latitude">
+                                            <input name="gps_longitude" class="form-control form-input gps-longitude-input" value="{{ item.gps_longitude if item.gps_longitude is not none else '' }}" placeholder="Longitude">
+                                            <input name="allowed_radius_meters" class="form-control form-input" type="number" min="1" value="{{ item.allowed_radius_meters or 20 }}" required>
+                                            <input name="post_attendance_tracking_minutes" class="form-control form-input" type="number" min="0" max="180" value="{{ item.post_attendance_tracking_minutes if item.post_attendance_tracking_minutes is not none else post_attendance_tracking_default_minutes }}" required>
+                                            <button class="btn quick-btn admin-live-location-btn" type="button">Use Live Browser Location</button>
+                                            <button class="btn quick-btn admin-reset-gps-tracking-btn"
+                                                    type="button"
+                                                    data-default-radius="20"
+                                                    data-default-tracking="{{ post_attendance_tracking_default_minutes }}">
+                                                Reset GPS & Tracker
+                                            </button>
+                                            <button class="btn send-btn" type="submit">Save Session Changes</button>
+                                        </form>
+                                    </details>
+                                    <form method="post" action="{{ url_for('remove_schedule', schedule_id=item.id) }}">
+                                        <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                        <button class="btn delete-btn" type="submit">Delete Session</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No dated class session saved yet. Create one above and it will appear only on that exact date.</p>
+                        {% endfor %}
+                    </div>
+
+                    <h4 class="panel-title h5 mb-3">This week's session timeline</h4>
+                    <div class="student-list">
+                        {% for item in weekly_sessions %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                    <p>{{ item.day_name }} | {{ item.session_date }} | {{ item.start_time[:5] }} - {{ item.end_time[:5] }}</p>
+                                    <p>Room: {{ item.room_name or item.class_name }}</p>
+                                    <p>Status: <span class="legend-chip {% if item.session_status == 'Active' %}legend-present{% elif item.session_status in ['Scheduled', 'Delayed'] %}legend-upcoming{% elif item.session_status == 'Cancelled' %}legend-absent{% else %}legend-neutral{% endif %}">{{ item.session_status }}</span></p>
+                                    <p>Post-Attendance Tracking: {{ item.post_attendance_tracking_minutes if item.post_attendance_tracking_minutes is not none else post_attendance_tracking_default_minutes }} minute(s)</p>
+                                </div>
+                                <div class="student-action-stack">
+                                    <div class="meta-line">Present {{ item.present_count or 0 }} | Late {{ item.late_count or 0 }} | Absent {{ item.absent_count or 0 }}</div>
+                                    <details class="edit-student-panel">
+                                        <summary class="btn edit-btn">Manage Session</summary>
+                                        <form method="post" action="{{ url_for('save_session_status', session_id=item.id) }}" class="edit-student-form">
+                                            <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                            <select name="session_status" class="form-select form-input" required>
+                                                {% for status in ['Scheduled','Active','Delayed','Cancelled','Completed'] %}
+                                                <option value="{{ status }}" {% if item.session_status == status %}selected{% endif %}>{{ status }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <input name="status_reason" class="form-control form-input" value="{{ item.status_reason }}" placeholder="Reason / notes">
+                                            <input name="substitute_teacher" class="form-control form-input" value="{{ item.substitute_teacher }}" placeholder="Substitute teacher (optional)">
+                                            <input type="time" name="attendance_open_time" class="form-control form-input" value="{{ item.attendance_open_time[:5] }}">
+                                            <input type="time" name="attendance_close_time" class="form-control form-input" value="{{ item.attendance_close_time[:5] }}">
+                                            <input type="time" name="late_close_time" class="form-control form-input" value="{{ item.late_close_time[:5] }}">
+                                            <input name="post_attendance_tracking_minutes" class="form-control form-input" type="number" min="0" max="180" value="{{ item.post_attendance_tracking_minutes if item.post_attendance_tracking_minutes is not none else post_attendance_tracking_default_minutes }}">
+                                            <button class="btn quick-btn admin-reset-tracking-btn" type="button" data-default-tracking="{{ post_attendance_tracking_default_minutes }}">Reset Tracking Limit</button>
+                                            <button class="btn send-btn" type="submit">Save Session Update</button>
+                                        </form>
+                                    </details>
+                                    {% if item.id and item.session_status != 'Active' %}
+                                    <form method="post" action="{{ url_for('remove_session', session_id=item.id) }}">
+                                        <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                        <button class="btn delete-btn" type="submit">Delete Session</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No class sessions are scheduled inside this week yet. Only the exact dates created by admin appear here.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-5">
+                <div class="panel-card mb-4 reveal-section">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Today's sessions</h3>
+                        <span class="meta-line">Operational controls for current-day sessions</span>
+                    </div>
+                    <div class="student-list">
+                        {% for item in today_sessions %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                    <p>{{ item.session_date }} | {{ item.start_time[:5] }} - {{ item.end_time[:5] }} | Teacher: {{ item.substitute_teacher or item.teacher_name }}</p>
+                                    <p>Room: {{ item.room_name or item.class_name }}</p>
+                                    <p>Status: <span class="legend-chip {% if item.session_status == 'Active' %}legend-present{% elif item.session_status in ['Scheduled', 'Delayed'] %}legend-upcoming{% elif item.session_status == 'Cancelled' %}legend-absent{% else %}legend-neutral{% endif %}">{{ item.session_status }}</span></p>
+                                    <p>Present: {{ item.present_count or 0 }} | Late: {{ item.late_count or 0 }} | Absent: {{ item.absent_count or 0 }} | Rejected: {{ item.rejected_count or 0 }}</p>
+                                </div>
+                                <div class="student-action-stack">
+                                    <details class="edit-student-panel">
+                                        <summary class="btn edit-btn">Session Status</summary>
+                                        <form method="post" action="{{ url_for('save_session_status', session_id=item.id) }}" class="edit-student-form">
+                                            <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                            <select name="session_status" class="form-select form-input" required>
+                                                {% for status in ['Scheduled','Active','Delayed','Cancelled','Completed'] %}
+                                                <option value="{{ status }}" {% if item.session_status == status %}selected{% endif %}>{{ status }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <input name="status_reason" class="form-control form-input" value="{{ item.status_reason }}" placeholder="Reason / notes">
+                                            <input name="substitute_teacher" class="form-control form-input" value="{{ item.substitute_teacher }}" placeholder="Substitute teacher (optional)">
+                                            <input type="time" name="attendance_open_time" class="form-control form-input" value="{{ item.attendance_open_time[:5] }}">
+                                            <input type="time" name="attendance_close_time" class="form-control form-input" value="{{ item.attendance_close_time[:5] }}">
+                                            <input type="time" name="late_close_time" class="form-control form-input" value="{{ item.late_close_time[:5] }}">
+                                            <input name="post_attendance_tracking_minutes" class="form-control form-input" type="number" min="0" max="180" value="{{ item.post_attendance_tracking_minutes if item.post_attendance_tracking_minutes is not none else post_attendance_tracking_default_minutes }}">
+                                            <button class="btn quick-btn admin-reset-tracking-btn" type="button" data-default-tracking="{{ post_attendance_tracking_default_minutes }}">Reset Tracking Limit</button>
+                                            <button class="btn send-btn" type="submit">Update Session</button>
+                                        </form>
+                                    </details>
+                                    <details class="edit-student-panel">
+                                        <summary class="btn quick-btn">Session GPS</summary>
+                                        <form method="post" action="{{ url_for('save_session_gps', session_id=item.id) }}" class="edit-student-form gps-session-form">
+                                            <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                            <input type="hidden" name="gps_source" value="manual" class="gps-source-input">
+                                            <input name="gps_latitude" class="form-control form-input gps-latitude-input" value="{{ item.gps_latitude if item.gps_latitude is not none else '' }}" placeholder="Latitude" required>
+                                            <input name="gps_longitude" class="form-control form-input gps-longitude-input" value="{{ item.gps_longitude if item.gps_longitude is not none else '' }}" placeholder="Longitude" required>
+                                            <input name="allowed_radius_meters" class="form-control form-input" type="number" min="1" value="{{ item.allowed_radius_meters or 20 }}" required>
+                                            {% if item.session_status in ['Active', 'Delayed'] %}
+                                            <input name="active_gps_clear_confirmation" class="form-control form-input" placeholder="Type CLEAR ACTIVE GPS to clear live session GPS">
+                                            <p class="meta-line mb-0">Safety lock: live session GPS can only be cleared after typing CLEAR ACTIVE GPS and confirming.</p>
+                                            {% endif %}
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <button class="btn quick-btn admin-live-location-btn" type="button">Use Live Browser Location</button>
+                                                <button class="btn quick-btn admin-reset-gps-tracking-btn" type="button" data-default-radius="20">Reset GPS Fields</button>
+                                                <button class="btn send-btn" type="submit">Save GPS</button>
+                                                <button class="btn delete-btn admin-confirm-action"
+                                                        type="submit"
+                                                        formaction="{{ url_for('clear_session_gps', session_id=item.id) }}"
+                                                        data-confirm-message="{% if item.session_status in ['Active', 'Delayed'] %}This session is live. Make sure the confirmation text is filled correctly before clearing GPS. Continue?{% else %}Clear GPS for this session?{% endif %}">
+                                                    {% if item.session_status in ['Active', 'Delayed'] %}Clear GPS (Protected){% else %}Clear GPS{% endif %}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </details>
+                                    {% if item.id and item.session_status != 'Active' %}
+                                    <form method="post" action="{{ url_for('remove_session', session_id=item.id) }}">
+                                        <input type="hidden" name="next" value="{{ url_for('admin_sessions') }}">
+                                        <button class="btn delete-btn" type="submit">Delete Session</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No sessions are generated for today.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="panel-card reveal-section">
+                    <h3 class="panel-title mb-3">GPS audit trail</h3>
+                    <div class="student-list">
+                        {% for item in gps_change_logs %}
+                        <div class="student-item">
+                            <h4>{{ item.target_type|title }} change by {{ item.admin_email or 'Admin' }}</h4>
+                            <p>{{ item.changed_at }}</p>
+                            <p>Old: {{ item.old_latitude }}, {{ item.old_longitude }} ({{ item.old_radius }} m)</p>
+                            <p>New: {{ item.new_latitude }}, {{ item.new_longitude }} ({{ item.new_radius }} m)</p>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No GPS changes logged yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

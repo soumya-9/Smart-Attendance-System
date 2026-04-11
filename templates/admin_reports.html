@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">REPORTS</p>
+            <h1 class="main-title mb-2">Attendance Reports</h1>
+            <p class="sub-title mb-0">Filter attendance records, review the current report set on-screen, and export CSV using the existing report backend.</p>
+        </div>
+
+        <div class="panel-card mb-4 reveal-section">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="badge-text mb-2">FILTERS</p>
+                    <h3 class="panel-title mb-1">Report filters</h3>
+                    <p class="meta-line mb-0">Filter by date range, class, student, and attendance status.</p>
+                </div>
+                <a class="btn send-btn"
+                   href="{{ url_for('export_reports', date_from=report_filters.date_from, date_to=report_filters.date_to, class_name=report_filters.class_name, student_id=report_filters.student_id_raw, status=report_filters.status) }}">
+                    Download CSV
+                </a>
+            </div>
+            <form method="get" action="{{ url_for('admin_reports') }}" class="row g-3">
+                <div class="col-md-3">
+                    <label class="meta-line">Date From</label>
+                    <input type="date" name="date_from" value="{{ report_filters.date_from }}" class="form-control form-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="meta-line">Date To</label>
+                    <input type="date" name="date_to" value="{{ report_filters.date_to }}" class="form-control form-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="meta-line">Class</label>
+                    <select name="class_name" class="form-select form-input">
+                        <option value="">All classes</option>
+                        {% for class_name in report_classes %}
+                        <option value="{{ class_name }}" {% if report_filters.class_name == class_name %}selected{% endif %}>{{ class_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="meta-line">Student</label>
+                    <select name="student_id" class="form-select form-input">
+                        <option value="">All students</option>
+                        {% for student in report_students %}
+                        <option value="{{ student.id }}" {% if report_filters.student_id_raw == (student.id|string) %}selected{% endif %}>{{ student.name }} ({{ student.class_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="meta-line">Status</label>
+                    <select name="status" class="form-select form-input">
+                        <option value="">All statuses</option>
+                        {% for status in ['Present', 'Late', 'Absent', 'Cancelled', 'Rejected'] %}
+                        <option value="{{ status }}" {% if report_filters.status == status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 d-flex flex-wrap gap-2">
+                    <button class="btn send-btn" type="submit">Apply Filters</button>
+                    <a href="{{ url_for('admin_reports') }}" class="btn quick-btn">Clear Filters</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-metric-grid mb-4 reveal-section">
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">TOTAL ROWS</p>
+                <h3>{{ report_summary.total_records }}</h3>
+                <p class="meta-line mb-0">Report records</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">PRESENT</p>
+                <h3>{{ report_summary.present_count }}</h3>
+                <p class="meta-line mb-0">Present rows</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">LATE</p>
+                <h3>{{ report_summary.late_count }}</h3>
+                <p class="meta-line mb-0">Late rows</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">ABSENT</p>
+                <h3>{{ report_summary.absent_count }}</h3>
+                <p class="meta-line mb-0">Absent rows</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">CANCELLED / REJECTED</p>
+                <h3>{{ report_summary.cancelled_count + report_summary.rejected_count }}</h3>
+                <p class="meta-line mb-0">Exceptions</p>
+            </div>
+        </div>
+
+        <div class="panel-card reveal-section">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h3 class="panel-title mb-0">Report results</h3>
+                <span class="meta-line">{{ report_rows|length }} row(s) shown</span>
+            </div>
+            <div class="table-responsive admin-table-shell">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Session Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Distance</th>
+                            <th>Marked Via</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in report_rows %}
+                        <tr>
+                            <td>
+                                <strong>{{ row.student_name }}</strong>
+                                <div class="meta-line">{{ row.enrollment_number }}</div>
+                            </td>
+                            <td>{{ row.student_class_name }}</td>
+                            <td>{{ row.subject_name }}</td>
+                            <td>{{ row.session_date }}</td>
+                            <td>{{ row.start_time[:5] }} - {{ row.end_time[:5] }}</td>
+                            <td>
+                                <span class="legend-chip {% if row.status == 'Present' %}legend-present{% elif row.status == 'Late' %}legend-upcoming{% elif row.status in ['Cancelled', 'Rejected'] %}legend-absent{% else %}legend-neutral{% endif %}">
+                                    {{ row.status }}
+                                </span>
+                            </td>
+                            <td>{{ row.distance_meters if row.distance_meters is not none else 'N/A' }}</td>
+                            <td>{{ row.marked_via }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-white-50 py-4">No report rows match the current filters.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

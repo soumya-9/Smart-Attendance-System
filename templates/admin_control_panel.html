@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Control Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">CONTROL PANEL</p>
+            <h1 class="main-title mb-2">Admin Control Panel</h1>
+            <p class="sub-title mb-0">Manage academic rules and create dated class sessions from one focused control workspace inside the admin portal.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-5">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">WORKING DAYS AND RULES</p>
+                            <h3 class="panel-title mb-1">Academic days and attendance rules</h3>
+                            <p class="meta-line mb-0">Keep workdays, low-attendance threshold, and default GPS tracking rules aligned in one place.</p>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{{ url_for('save_working_days') }}" class="form-grid">
+                        <input type="hidden" name="next" value="{{ url_for('admin_control_panel') }}">
+                        <div class="d-flex flex-wrap gap-3">
+                            {% for day in working_days %}
+                            <label class="form-check d-flex align-items-center gap-2">
+                                <input class="form-check-input" type="checkbox" name="day_{{ day.day_name }}" {% if day.is_working %}checked{% endif %}>
+                                <span>{{ day.day_name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <button class="btn send-btn" type="submit">Save Working Days</button>
+                    </form>
+
+                    <form method="post" action="{{ url_for('save_low_attendance_threshold') }}" class="form-grid mt-4">
+                        <input type="hidden" name="next" value="{{ url_for('admin_control_panel') }}">
+                        <div>
+                            <label class="form-label">Low Attendance Threshold (%)</label>
+                            <input type="number" min="0" max="100" step="0.1" name="low_attendance_threshold" class="form-control form-input" value="{{ low_attendance_threshold }}" required>
+                        </div>
+                        <button class="btn quick-btn" type="submit">Update Threshold</button>
+                    </form>
+
+                    <form method="post" action="{{ url_for('save_post_attendance_tracking_default') }}" class="form-grid mt-4">
+                        <input type="hidden" name="next" value="{{ url_for('admin_control_panel') }}">
+                        <div>
+                            <label class="form-label">Default Post-Attendance GPS Tracking (Minutes)</label>
+                            <input type="number" min="0" max="180" step="1" name="post_attendance_tracking_default_minutes" class="form-control form-input" value="{{ post_attendance_tracking_default_minutes }}" required>
+                            <small class="meta-line">0 disables post-attendance tracking by default. Session-specific values can still be adjusted later from the Class Sessions page.</small>
+                        </div>
+                        <button class="btn quick-btn" type="submit">Update Tracking Default</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">CREATE DATED CLASS SESSION</p>
+                            <h3 class="panel-title mb-1">Create dated class session</h3>
+                            <p class="meta-line mb-0">Save an exact-date session with attendance timing, GPS radius, and post-attendance tracker rules.</p>
+                        </div>
+                        <span class="legend-chip legend-upcoming">Default tracking: {{ post_attendance_tracking_default_minutes }} min</span>
+                    </div>
+                    <form method="post" action="{{ url_for('create_schedule') }}" class="row g-3">
+                        <input type="hidden" name="next" value="{{ url_for('admin_control_panel') }}">
+                        <div class="col-md-6"><input name="class_name" class="form-control form-input" placeholder="Class name" required></div>
+                        <div class="col-md-6"><input name="subject_name" class="form-control form-input" placeholder="Subject" required></div>
+                        <div class="col-md-6"><input name="teacher_name" class="form-control form-input" placeholder="Teacher" required></div>
+                        <div class="col-md-6"><input name="room_name" class="form-control form-input" placeholder="Room / section / lab"></div>
+                        <div class="col-md-6"><label class="meta-line">Session Date</label><input type="date" name="session_date" class="form-control form-input" required></div>
+                        <div class="col-md-4"><label class="meta-line">Start</label><input type="time" name="start_time" class="form-control form-input" required></div>
+                        <div class="col-md-4"><label class="meta-line">End</label><input type="time" name="end_time" class="form-control form-input" required></div>
+                        <div class="col-md-4"><label class="meta-line">Open</label><input type="time" name="attendance_open_time" class="form-control form-input" required></div>
+                        <div class="col-md-6"><label class="meta-line">Close</label><input type="time" name="attendance_close_time" class="form-control form-input" required></div>
+                        <div class="col-md-6"><label class="meta-line">Late Close</label><input type="time" name="late_close_time" class="form-control form-input" required></div>
+                        <div class="col-md-4"><input name="gps_latitude" class="form-control form-input gps-latitude-input" placeholder="Latitude"></div>
+                        <div class="col-md-4"><input name="gps_longitude" class="form-control form-input gps-longitude-input" placeholder="Longitude"></div>
+                        <div class="col-md-4"><input name="allowed_radius_meters" class="form-control form-input" type="number" min="1" value="20" placeholder="Radius meters"></div>
+                        <div class="col-md-6">
+                            <label class="meta-line">Post-Attendance GPS Tracking (Minutes)</label>
+                            <input name="post_attendance_tracking_minutes" class="form-control form-input" type="number" min="0" max="180" value="{{ post_attendance_tracking_default_minutes }}" placeholder="Tracking minutes">
+                        </div>
+                        <div class="col-12 d-flex flex-wrap gap-2">
+                            <button class="btn quick-btn admin-live-location-btn" type="button">Use Live Browser Location</button>
+                            <button class="btn quick-btn admin-reset-gps-tracking-btn"
+                                    type="button"
+                                    data-default-radius="20"
+                                    data-default-tracking="{{ post_attendance_tracking_default_minutes }}">
+                                Reset GPS & Tracker
+                            </button>
+                            <button class="btn send-btn" type="submit">Save Session</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

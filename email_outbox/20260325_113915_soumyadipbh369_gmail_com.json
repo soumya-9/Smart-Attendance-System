@@ -1,0 +1,8 @@
+{
+  "status": "not_sent",
+  "reason": "SMTP settings are not configured.",
+  "to": "soumyadipbh369@gmail.com",
+  "subject": "Student Enrollment Confirmation",
+  "body": "Congratulations, you are enrolled as a new student, 'Soumyadip Bhattacharya'.",
+  "saved_at": "2026-03-25 11:39:15"
+}

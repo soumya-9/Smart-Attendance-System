@@ -1,0 +1,1098 @@
+[
+  {
+    "old": "The endless thanks goes to Lord Almighty for all the blessings he has showered onto me, which has enabled us to write this last note in my research work. During the period of our research, as in the rest of my life, we have been blessed by Almighty with some extraordinary people who have spun a web of support around us. Words can never be enough in expressing how grateful I am to those incredible people in my life who made this thesis possible. I would like an attempt to thank them for making my time during my research in the Institute a period I will treasure. I am deeply indebted to my research supervisor, Professor Debajyoti Chatterjee Sir for giving me such an interesting thesis topic. Each meeting with him added in valuable aspects to the implementation and broadened our perspective. He has guided me with his invaluable suggestions, lightened up the way in my darkest times and encouraged us a lot in the academic life.",
+    "new": "I would like to express my sincere gratitude to Prof. Debajyoti Chatterjee for his guidance, valuable feedback, and continuous encouragement throughout this project. I am also thankful to the Department of Computer Science and Engineering, University of Engineering and Management, Jaipur, for providing the academic environment and resources required to complete this work. Finally, I am grateful to my family and friends for their support and motivation during the development, testing, and documentation of the project."
+  },
+  {
+    "old": "In recent years, maintaining an accurate and secure attendance system has become a major concern for educational institutions. Traditional methods such as manual attendance registers are time-consuming and prone to errors and misuse. Proxy attendance and lack of proper verification reduce the reliability of such systems. This project presents a Smart Attendance System using Multimodal Artificial Intelligence, which combines different technologies to improve accuracy and security. The system uses facial recognition to identify students, anti-spoofing techniques to prevent fake attendance, emotion detection for additional verification, and GPS-based tracking to confirm the student’s physical presence. The attendance process is divided into two stages. In the first stage, students must mark their attendance within a defined time window. In the second stage, the system tracks the student’s location for a specific duration. Attendance is finalized only if the student remains within the allowed location throughout the tracking period. An AI-based assistant is also included in the system, which helps users analyse attendance data and provides useful insights such as attendance percentage and subject-wise performance. The system provides a reliable, efficient, and secure solution for modern attendance management.",
+    "new": "This project presents a smart attendance system that combines face recognition, anti-spoofing, emotion detection, and GPS-based validation to reduce proxy attendance and improve reliability in classroom monitoring. The proposed system follows a two-stage workflow. In the first stage, a student is verified through facial analysis and liveness checking while attempting to mark attendance. In the second stage, the system performs location validation for a predefined duration before confirming the record. A Flask-based web application is used to connect the user interface, AI modules, and SQLite database, while an AI assistant is included to help users access attendance-related information. Experimental testing indicates that the integrated approach provides stronger verification than manual or single-factor methods, although performance still depends on lighting conditions, camera quality, and GPS stability. The work demonstrates a practical B.Tech-level implementation of a secure, real-time, and extensible attendance platform."
+  },
+  {
+    "old": "In modern educational institutions, maintaining accurate attendance records is an essential task. Attendance plays an important role in evaluating student participation, discipline, and overall academic performance. However, traditional attendance methods such as manual registers or basic digital systems often face several challenges.",
+    "new": "Attendance records are used by institutions to monitor classroom participation, evaluate discipline, and maintain official academic documentation. Because of this, the marking process should be quick, reliable, and resistant to misuse."
+  },
+  {
+    "old": "Manual attendance systems require significant time and effort from teachers and are prone to human errors. In addition, proxy attendance is a common issue, where students mark attendance on behalf of others. Even some digital systems fail to address these problems effectively because they focus only on identity verification without considering physical presence.",
+    "new": "In many colleges, attendance is still recorded manually or through limited digital tools. These approaches consume lecture time, depend on human supervision, and rarely prevent proxy attendance in a dependable manner."
+  },
+  {
+    "old": "To address these issues, this project proposes a smart attendance system that combines Artificial Intelligence techniques with location-based verification. The system uses face recognition to identify students, anti-spoofing methods to prevent fake attendance, and GPS tracking to ensure that the student is present in the correct location.",
+    "new": "The proposed project addresses this problem by combining identity verification and physical-presence verification in the same workflow. Face recognition is used for student identification, anti-spoofing helps reject fake inputs such as printed photos or screen replays, and GPS-based validation checks whether the student remains within the approved location."
+  },
+  {
+    "old": "Another important feature of this system is the inclusion of an AI assistant, which helps users access attendance-related information in an interactive way. This adds an intelligent layer to the system and improves user experience.",
+    "new": "A lightweight AI assistant is also integrated into the system so that users can view attendance information and obtain simple responses through an interactive interface. This feature improves usability without changing the core attendance logic."
+  },
+  {
+    "old": "The system is designed to work in real-time and aims to reduce manual effort while increasing reliability. By combining multiple technologies, the proposed system provides a more secure and efficient solution compared to existing methods.",
+    "new": "By integrating these modules in a web-based architecture, the system aims to reduce manual effort, strengthen authenticity, and provide a more practical solution for smart attendance management."
+  },
+  {
+    "old": "Attendance management in many institutions still relies on outdated methods that are not efficient or secure.",
+    "new": "Many institutions still use attendance procedures that are slow to execute and weak in verification. As a result, teachers spend valuable class time on routine record keeping, while the system remains vulnerable to false or incomplete attendance entries."
+  },
+  {
+    "old": "Some common problems include:",
+    "new": "The major issues identified in the existing process are:"
+  },
+  {
+    "old": "Manual attendance takes time and reduces teaching efficiency",
+    "new": "Manual marking increases classroom overhead and interrupts teaching time"
+  },
+  {
+    "old": "Proxy attendance cannot be easily detected",
+    "new": "Proxy attendance is difficult to detect in paper-based or loosely monitored systems"
+  },
+  {
+    "old": "Lack of proper verification of student presence",
+    "new": "Presence is often recorded without verifying whether the student is physically at the required location"
+  },
+  {
+    "old": "No real-time monitoring or validation",
+    "new": "Most low-cost solutions do not provide real-time validation after attendance is marked"
+  },
+  {
+    "old": "Existing systems do not combine multiple verification methods",
+    "new": "Single-factor systems do not offer enough protection against misuse or false confirmation"
+  },
+  {
+    "old": "Due to these limitations, there is a need for a system that can automate attendance while ensuring both identity and location verification.",
+    "new": "These issues justify the need for an automated attendance platform that verifies both identity and location before finalizing the record."
+  },
+  {
+    "old": "The main aim of this project is to build a smart attendance system that can reduce the common problems seen in traditional attendance methods. Instead of depending on a single technique, the system tries to combine different approaches so that attendance becomes more reliable.",
+    "new": "The primary aim of this project is to design and implement a smart attendance platform that improves security, reduces manual work, and remains practical for classroom use."
+  },
+  {
+    "old": "The objectives of the project are listed below:",
+    "new": "The main objectives of the project are:"
+  },
+  {
+    "old": "To create an automated attendance process so that manual work can be reduced and time can be saved during classes.",
+    "new": "To automate attendance marking so that classroom time is used more efficiently"
+  },
+  {
+    "old": "To use face recognition for identifying students, so that attendance is based on actual identity and not on manual marking.",
+    "new": "To identify students through face recognition instead of manual roll calls"
+  },
+  {
+    "old": "To include a basic anti-spoofing feature, so that fake attempts using photos or videos can be avoided as much as possible.",
+    "new": "To reduce spoofing attempts by adding a liveness or anti-spoofing check"
+  },
+  {
+    "old": "To apply location verification using GPS, which ensures that the student is present in the correct place while marking attendance.",
+    "new": "To validate the user's classroom presence through GPS-based location monitoring"
+  },
+  {
+    "old": "To design a system where attendance is not finalized immediately, but checked again through a tracking process after marking.",
+    "new": "To confirm attendance only after a post-marking verification interval"
+  },
+  {
+    "old": "To build a simple interface for both admin and student, so that the system can be used without much difficulty.",
+    "new": "To provide separate interfaces for administrators and students"
+  },
+  {
+    "old": "To add a small AI assistant feature, which can help in answering basic attendance-related questions.",
+    "new": "To include an AI assistant for basic attendance queries and data access"
+  },
+  {
+    "old": "To improve the overall accuracy and transparency of attendance compared to existing systems.",
+    "new": "To improve transparency and traceability in attendance records"
+  },
+  {
+    "old": "To keep the system flexible so that it can be improved or expanded later if required.",
+    "new": "To keep the architecture extensible for future deployment at a larger scale"
+  },
+  {
+    "old": "In simple terms, the objective is to make attendance smarter, more secure, and less dependent on manual effort.",
+    "new": "Overall, the objective is to build a more secure and dependable attendance workflow than traditional manual or single-module methods."
+  },
+  {
+    "old": "The scope of this project mainly focuses on developing a working attendance system that can be used in a real classroom-like environment. It does not aim to cover all advanced possibilities, but it provides a strong base that can be improved later.",
+    "new": "The scope of this project is limited to the design and implementation of a working prototype that can operate in a classroom-like environment using commonly available hardware and software."
+  },
+  {
+    "old": "The scope of the system includes the following:",
+    "new": "The present work covers the following functional boundaries:"
+  },
+  {
+    "old": "The system can be used to mark attendance in classrooms using a camera and web interface.",
+    "new": "Attendance marking through a webcam-enabled web interface"
+  },
+  {
+    "old": "It supports real-time face detection, which helps in identifying students quickly during attendance marking.",
+    "new": "Real-time face capture and identity matching for registered users"
+  },
+  {
+    "old": "The system checks whether the student is present within a specific location range, which is defined by the admin.",
+    "new": "Location verification within an admin-defined range during the attendance session"
+  },
+  {
+    "old": "It follows a two-step process, where attendance is first marked and then verified before final confirmation.",
+    "new": "A two-stage workflow in which attendance remains provisional until verification is completed"
+  },
+  {
+    "old": "The admin is given control to create sessions, set timing, and manage attendance data.",
+    "new": "Administrative control over session creation, timing, and attendance review"
+  },
+  {
+    "old": "Students can access their own records through a separate portal, where they can check attendance details.",
+    "new": "Student-side access to attendance status and attendance history"
+  },
+  {
+    "old": "The project shows how different components like AI models and GPS can be combined into a single system.",
+    "new": "Integration of AI modules and location logic in a single application workflow"
+  },
+  {
+    "old": "The current system is designed for a limited number of users, but it can be extended for larger use later.",
+    "new": "Prototype-level deployment for a limited number of users"
+  },
+  {
+    "old": "It can also be adapted for use in offices or other organizations, not only in educational institutions.",
+    "new": "Potential adaptation of the same framework for offices or training environments"
+  },
+  {
+    "old": "Overall, the project focuses on building a practical system that works properly in basic conditions, while leaving room for future improvements.",
+    "new": "The project does not attempt full-scale institutional deployment, but it establishes a solid base for future expansion and refinement."
+  },
+  {
+    "old": "This chapter presents the results obtained after implementing the proposed smart attendance system. It also discusses how the system performed under different conditions and what observations were made during testing.",
+    "new": "This chapter discusses the observed behavior of the implemented system during testing and evaluates how well the integrated modules performed in practice."
+  },
+  {
+    "old": "The system was tested multiple times using different scenarios to check its reliability, accuracy, and overall performance. The aim was to ensure that each module works properly both individually and when integrated together.",
+    "new": "Testing was carried out in multiple scenarios so that both individual modules and the complete attendance workflow could be examined under realistic operating conditions."
+  },
+  {
+    "old": "To evaluate the system, several tests were conducted step by step. Instead of testing everything at once, each feature was verified separately and then combined for full system testing.",
+    "new": "The evaluation strategy was incremental: each feature was tested separately first, and the full system was tested after integration."
+  },
+  {
+    "old": "The face recognition module was tested by capturing images of registered students.",
+    "new": "The face recognition module was evaluated using registered student images captured through the attendance interface."
+  },
+  {
+    "old": "The system was able to correctly identify registered users in most cases",
+    "new": "Registered users were identified correctly in most normal test cases"
+  },
+  {
+    "old": "Recognition accuracy was higher when lighting conditions were stable",
+    "new": "Accuracy improved when lighting remained stable"
+  },
+  {
+    "old": "Minor delays were observed in low-light conditions",
+    "new": "Recognition delays increased in low-light situations"
+  },
+  {
+    "old": "It was noticed that proper camera positioning improves detection performance.",
+    "new": "Camera position and face visibility influenced performance"
+  },
+  {
+    "old": "To check system security, attempts were made using photos and mobile screens.",
+    "new": "Spoofing resistance was tested using printed photographs and images shown on a mobile screen."
+  },
+  {
+    "old": "The system successfully detected fake inputs in most cases",
+    "new": "Most fake inputs were detected and rejected successfully"
+  },
+  {
+    "old": "Real face detection was more accurate when the user slightly moved their face",
+    "new": "Live-user detection improved when the subject showed slight natural movement"
+  },
+  {
+    "old": "Static images were rejected effectively",
+    "new": "Static image attacks were rejected more reliably than dynamic replay attempts"
+  },
+  {
+    "old": "This confirms that the anti-spoofing feature adds an important layer of protection.",
+    "new": "These results indicate that liveness checking adds a meaningful security layer to the system."
+  },
+  {
+    "old": "Emotion detection was tested with different facial expressions.",
+    "new": "Emotion detection was tested using a small set of basic facial expressions."
+  },
+  {
+    "old": "The system could detect basic emotions such as happy, neutral, and sad",
+    "new": "The module detected common expressions such as happy, neutral, and sad"
+  },
+  {
+    "old": "Sometimes results slightly varied depending on lighting and angle",
+    "new": "Outputs varied slightly with lighting and viewing angle"
+  },
+  {
+    "old": "The module worked better in clear and stable environments",
+    "new": "Performance was better in stable capture conditions"
+  },
+  {
+    "old": "Although not critical for attendance, it enhances the system’s intelligence.",
+    "new": "Although this module is not the main basis of attendance, it demonstrates the extensibility of the AI pipeline."
+  },
+  {
+    "old": "GPS tracking was tested under different movement conditions.",
+    "new": "GPS behavior was tested under both stationary and movement-based conditions."
+  },
+  {
+    "old": "When the user stayed at the same location, distance remained close to zero",
+    "new": "Distance remained near zero when the user stayed in the same place"
+  },
+  {
+    "old": "When the user moved, the system updated the distance dynamically",
+    "new": "Location values changed dynamically as the user moved"
+  },
+  {
+    "old": "Minor fluctuations were observed due to GPS accuracy limitations",
+    "new": "Minor fluctuations were observed because of normal GPS variance"
+  },
+  {
+    "old": "It was also observed that GPS accuracy depends on network strength and device quality.",
+    "new": "Network condition and device quality influenced tracking consistency"
+  },
+  {
+    "old": "The complete attendance process was tested with real-time scenarios.",
+    "new": "The full attendance workflow was tested in end-to-end classroom-like scenarios."
+  },
+  {
+    "old": "Students were able to mark attendance within the given time window",
+    "new": "Students were able to submit attendance within the configured time window"
+  },
+  {
+    "old": "After the attendance window closed, GPS tracking started automatically",
+    "new": "GPS tracking started automatically after the initial marking phase"
+  },
+  {
+    "old": "Attendance remained provisional during tracking",
+    "new": "Attendance remained provisional during the tracking interval"
+  },
+  {
+    "old": "Final attendance was confirmed only after successful validation",
+    "new": "Final confirmation occurred only after successful validation"
+  },
+  {
+    "old": "This workflow ensured that both identity and location were verified.",
+    "new": "The integrated workflow therefore verified both identity and location before storing the final result."
+  },
+  {
+    "old": "The performance of each module was analysed separately to understand how effectively they function under real-time conditions. The face recognition module performed well in identifying registered users, especially in stable lighting conditions. The anti-spoofing mechanism was able to detect most fake attempts, which improves system security.",
+    "new": "Each module contributed differently to overall system performance. Face recognition handled identity estimation effectively in favorable lighting, anti-spoofing reduced the risk of false acceptance, and GPS validation added a second layer of presence checking."
+  },
+  {
+    "old": "The GPS module worked properly in tracking location, although slight variations were noticed due to environmental factors. Overall, each module contributed effectively to the system.",
+    "new": "When used together, these modules produced a more trustworthy attendance decision than any single module operating in isolation."
+  },
+  {
+    "old": "The system showed good accuracy when all components were working together. The combination of face recognition and GPS validation reduced the chances of incorrect attendance marking.",
+    "new": "The combined system showed good practical accuracy for prototype-level deployment. Because attendance depended on recognition, liveness, and location checks, the chance of false confirmation was lower than in manual or single-factor methods."
+  },
+  {
+    "old": "Reliability was observed to be higher when the system was used under normal conditions such as proper lighting and stable network connection. The structured workflow of attendance and tracking made the system more dependable.",
+    "new": "Reliability was highest when camera quality, lighting, and network stability were within normal operating limits. Under these conditions, the workflow remained consistent and responsive."
+  },
+  {
+    "old": "During testing, a few limitations were observed. GPS readings sometimes showed minor fluctuations, especially in indoor environments. Face recognition performance was slightly affected in low lighting conditions.",
+    "new": "The main limitations observed during testing were environmental sensitivity and resource dependence. Indoor GPS fluctuation and weak lighting sometimes affected module quality, and concurrent processing occasionally increased response time on moderate hardware."
+  },
+  {
+    "old": "In some cases, system response time increased when multiple processes were running together. These limitations are common in real-world systems and can be improved in future versions.",
+    "new": "These limitations do not invalidate the prototype, but they indicate the areas that require optimization before larger deployment."
+  },
+  {
+    "old": "Based on the testing results, the system can be considered effective and reliable for attendance management. It successfully prevents proxy attendance and ensures that students are physically present.",
+    "new": "Overall, the proposed system can be considered effective for secure attendance prototyping. It reduces the scope for proxy attendance and demonstrates the advantage of combining multimodal verification in a classroom context."
+  },
+  {
+    "old": "The integration of multiple technologies makes the system more secure compared to traditional methods. With further improvements, the system can be made even more efficient and scalable.",
+    "new": "With further optimization, the same framework can be extended into a more scalable solution for institutional use."
+  },
+  {
+    "old": "This chapter summarizes the overall work carried out in the project and also discusses how the system can be improved further in the future.",
+    "new": "This chapter summarizes the contribution of the project and highlights the most important directions for future improvement."
+  },
+  {
+    "old": "In this project, an attempt has been made to design and develop a smart attendance system by using multiple technologies together instead of relying on a single method. The system mainly focuses on improving the reliability and security of attendance marking.",
+    "new": "The work presented in this report demonstrates a multimodal smart attendance system that combines face recognition, anti-spoofing, emotion detection, and GPS-based verification within a single web platform."
+  },
+  {
+    "old": "The developed system combines face recognition, anti-spoofing, emotion detection, and GPS-based validation. These features work together to ensure that attendance is not only marked correctly but also verified properly before final confirmation.",
+    "new": "Instead of relying on one input alone, the system validates attendance through multiple checkpoints. This design improves confidence in the final record and reduces the possibility of proxy marking."
+  },
+  {
+    "old": "One important aspect of this system is the use of a time-based process. Students are required to mark their attendance within a specific time, and after that, their location is tracked for a certain duration. This approach helps in making sure that the student does not leave the location immediately after marking attendance.",
+    "new": "The staged attendance workflow, in which marking is followed by location validation, is one of the key contributions of the project. It ensures that attendance is not confirmed only on the basis of a momentary login or image capture."
+  },
+  {
+    "old": "During testing, the system worked satisfactorily in most situations. Face recognition was able to identify users correctly in normal conditions. The anti-spoofing feature helped in rejecting fake attempts such as photos. GPS tracking also functioned as expected, although some small variations were noticed, which is common in real-world environments.",
+    "new": "Testing showed that the prototype performs well under normal classroom conditions, especially when lighting, camera quality, and network availability are reasonably stable. Some GPS variation and response delays were observed, but the system remained functionally reliable."
+  },
+  {
+    "old": "The inclusion of an AI assistant makes the system more interactive and useful. It allows users to check their attendance details and performance easily.",
+    "new": "The inclusion of an AI assistant further improves usability by allowing users to access attendance information in a more interactive manner."
+  },
+  {
+    "old": "Overall, the project meets its main objective of creating a secure and automated attendance system. It shows how different technologies can be combined to build a more reliable solution compared to traditional methods.",
+    "new": "In summary, the project meets its objective of developing a practical and more secure alternative to traditional attendance methods."
+  },
+  {
+    "old": "While developing and testing the system, a few practical limitations were observed. These limitations are mainly related to real-world conditions and system dependencies.",
+    "new": "The limitations observed in this work are mainly related to real-world sensing conditions and prototype-scale deployment."
+  },
+  {
+    "old": "The performance of face recognition is affected by lighting conditions. In low light or poor camera quality, the detection accuracy may reduce slightly.",
+    "new": "Face recognition accuracy decreases when the lighting is weak or the camera feed is unclear."
+  },
+  {
+    "old": "The GPS-based location tracking sometimes shows small variations, especially in indoor environments. This is mainly due to signal fluctuations and device limitations.",
+    "new": "GPS readings may fluctuate indoors or in areas where device and network conditions are unstable."
+  },
+  {
+    "old": "The system depends on the availability of a webcam and internet connection. Without these, certain features such as face detection and GPS tracking cannot function properly.",
+    "new": "The system depends on webcam access, browser permissions, and internet connectivity for full functionality."
+  },
+  {
+    "old": "When multiple processes such as face detection, emotion analysis, and GPS tracking run together, the system may experience minor delays depending on the hardware capability.",
+    "new": "Running several AI and tracking operations simultaneously can introduce response delays on mid-range hardware."
+  },
+  {
+    "old": "The current implementation is designed for a limited number of users, so performance may vary if the system is scaled to a larger environment.",
+    "new": "The present prototype has been evaluated for a limited number of users and may require optimization before large-scale deployment."
+  },
+  {
+    "old": "The emotion detection feature provides basic results and may not always be fully accurate in every situation.",
+    "new": "Emotion analysis is included as an auxiliary feature and is not yet robust enough to serve as a primary attendance signal."
+  },
+  {
+    "old": "These limitations are common in systems that rely on real-time processing and external factors. However, they do not significantly affect the overall functionality of the system.",
+    "new": "These limitations are acceptable at prototype level, but they should be addressed before production deployment."
+  },
+  {
+    "old": "There are several opportunities to improve and extend the system in the future. These enhancements can make the system more efficient, scalable, and suitable for real-world deployment.",
+    "new": "Several extensions can make the system more practical and scalable in future work."
+  },
+  {
+    "old": "The system can be developed into a mobile application, allowing users to access attendance features more conveniently through smartphones.",
+    "new": "A dedicated mobile application could improve accessibility and make attendance interactions more convenient for end users."
+  },
+  {
+    "old": "Integration with cloud platforms such as AWS or Firebase can improve data storage, security, and accessibility from different locations.",
+    "new": "Cloud-based storage and deployment can improve scalability, synchronization, and centralized record management."
+  },
+  {
+    "old": "More advanced AI models can be used to improve the accuracy of face recognition and reduce errors under different conditions.",
+    "new": "More advanced recognition and liveness models can be integrated to improve robustness across varied environmental conditions."
+  },
+  {
+    "old": "The GPS tracking module can be enhanced using better location technologies to minimize fluctuations and improve precision.",
+    "new": "Location verification can be refined through better filtering or additional sensing techniques to reduce GPS fluctuation."
+  },
+  {
+    "old": "The system can include real-time notifications, such as alerts for attendance status or reminders for upcoming sessions.",
+    "new": "Notification features can be added for session reminders, attendance alerts, and validation outcomes."
+  },
+  {
+    "old": "The AI assistant can be improved to provide detailed analytics and predictions, such as identifying students with low attendance.",
+    "new": "The AI assistant can be extended to generate richer analytics and early-warning insights for low attendance."
+  },
+  {
+    "old": "The system can be integrated with existing academic systems for better management and coordination.",
+    "new": "Integration with institutional ERP or academic management systems would improve practical usefulness."
+  },
+  {
+    "old": "Additional security features such as multi-factor authentication can be introduced to further strengthen the system.",
+    "new": "Additional security mechanisms such as multi-factor authentication can further strengthen access control and record integrity."
+  },
+  {
+    "old": "With these improvements, the system can be made more robust and suitable for large-scale applications in educational institutions and organizations.",
+    "new": "These enhancements would move the project closer to a production-ready attendance platform for wider deployment."
+  },
+  {
+    "old": "Journal:",
+    "new": "Journal Articles:"
+  },
+  {
+    "old": "Book:",
+    "new": "Books:"
+  },
+  {
+    "old": "I. Good fellow, Y. Bagnio, A. Courville, Deep Learning, 1st ed. Cambridge: MIT Press, 2016.",
+    "new": "I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning, 1st ed. Cambridge: MIT Press, 2016."
+  },
+  {
+    "old": "Website:",
+    "new": "Web Resources:"
+  },
+  {
+    "old": "The system is designed using a modular and layered approach. Each component is responsible for a specific task, which helps in improving system performance and maintainability.",
+    "new": "The system follows a layered design in which each module handles a specific responsibility. This separation improves maintainability and reduces coupling between the user interface, backend logic, AI pipeline, and data layer."
+  },
+  {
+    "old": "The system consists of the following layers:",
+    "new": "The main layers of the proposed architecture are:"
+  },
+  {
+    "old": "User Interface Layer",
+    "new": "User interface layer for admin and student interactions"
+  },
+  {
+    "old": "Application Logic Layer",
+    "new": "Application logic layer for authentication, workflow control, and validation rules"
+  },
+  {
+    "old": "AI Processing Layer",
+    "new": "AI processing layer for recognition, spoof detection, and emotion analysis"
+  },
+  {
+    "old": "GPS Tracking Module",
+    "new": "Location monitoring layer for GPS capture and distance evaluation"
+  },
+  {
+    "old": "Database Layer",
+    "new": "Database layer for persistent storage of users, sessions, and attendance records"
+  },
+  {
+    "old": "Each layer communicates with the others to ensure smooth execution of the system.",
+    "new": "Communication between these layers allows attendance decisions to be made from combined evidence rather than from a single input."
+  },
+  {
+    "old": "The admin module is responsible for controlling and managing the system.",
+    "new": "The admin module controls the operational parameters of the system and supervises attendance activity."
+  },
+  {
+    "old": "Key functionalities include:",
+    "new": "The admin module is responsible for the following tasks:"
+  },
+  {
+    "old": "Creating and scheduling class sessions",
+    "new": "Creating and scheduling attendance sessions"
+  },
+  {
+    "old": "Setting GPS location and allowed radius",
+    "new": "Setting classroom coordinates and the allowed distance threshold"
+  },
+  {
+    "old": "Defining attendance and tracking time limits",
+    "new": "Defining attendance windows and post-marking tracking duration"
+  },
+  {
+    "old": "Monitoring student attendance records",
+    "new": "Reviewing attendance status and student activity"
+  },
+  {
+    "old": "Viewing analytics and reports",
+    "new": "Accessing reports and summary analytics"
+  },
+  {
+    "old": "The admin acts as the central authority for system operation.",
+    "new": "This design keeps configuration authority with the administrator while allowing the process to run automatically once a session starts."
+  },
+  {
+    "old": "The student module provides access to the attendance system.",
+    "new": "The student module provides the user-facing workflow through which attendance is marked and reviewed."
+  },
+  {
+    "old": "Main features include:",
+    "new": "The student module includes the following functions:"
+  },
+  {
+    "old": "Login using registered credentials",
+    "new": "Secure login using registered credentials"
+  },
+  {
+    "old": "Capturing face using webcam",
+    "new": "Face capture through the webcam interface"
+  },
+  {
+    "old": "Viewing attendance status",
+    "new": "Viewing current attendance status"
+  },
+  {
+    "old": "Accessing attendance history",
+    "new": "Checking previous attendance records"
+  },
+  {
+    "old": "Interacting with AI assistant",
+    "new": "Interacting with the built-in AI assistant"
+  },
+  {
+    "old": "The interface is designed to be simple and user-friendly.",
+    "new": "The student interface was kept simple so that the verification process remains understandable even for first-time users."
+  },
+  {
+    "old": "The attendance process follows a step-by-step flow:",
+    "new": "The end-to-end attendance workflow is summarized below:"
+  },
+  {
+    "old": "Admin creates a class session",
+    "new": "Admin creates a session for a specific class or subject"
+  },
+  {
+    "old": "Student logs into the system",
+    "new": "Student logs into the system during the permitted time window"
+  },
+  {
+    "old": "Student captures face and GPS location",
+    "new": "Student submits face and location data through the browser"
+  },
+  {
+    "old": "System performs face recognition and liveness detection",
+    "new": "System performs recognition and liveness verification"
+  },
+  {
+    "old": "Attendance is marked but not finalized",
+    "new": "Attendance is stored as provisional rather than final"
+  },
+  {
+    "old": "After attendance window closes, GPS tracking begins",
+    "new": "Post-marking GPS tracking begins after the initial attendance phase"
+  },
+  {
+    "old": "System monitors location for a defined duration",
+    "new": "Location is monitored for the configured duration"
+  },
+  {
+    "old": "Final attendance is confirmed or cancelled",
+    "new": "Attendance is confirmed or cancelled on the basis of validation outcome"
+  },
+  {
+    "old": "This workflow ensures both identity and location verification.",
+    "new": "This sequence strengthens attendance authenticity by checking both identity and continued presence."
+  },
+  {
+    "old": "In this chapter, the actual working and structure of the proposed system are explained in detail. The system is not built in a single step but developed gradually by combining different components such as user interface, backend logic, AI models, and GPS tracking.",
+    "new": "This chapter explains how the proposed design was implemented as an operational prototype. The implementation combines frontend interfaces, backend services, AI modules, and database support in a coordinated workflow."
+  },
+  {
+    "old": "The main aim during implementation was to make the system stable, easy to use, and reliable in real-time conditions. Special care was taken so that even if multiple operations are happening at the same time, the system does not stop or behave incorrectly.",
+    "new": "During development, priority was given to stability, modularity, and understandable system behavior so that the application could be demonstrated reliably under normal classroom conditions."
+  },
+  {
+    "old": "The design of the system follows a modular approach. Instead of keeping everything connected in a complex way, the system is divided into smaller parts. Each part performs a specific task, and together they complete the full attendance process.",
+    "new": "The detailed design follows a modular structure in which each component performs a limited role and exchanges data through defined application logic."
+  },
+  {
+    "old": "The main components included in the design are:",
+    "new": "The main implementation components are:"
+  },
+  {
+    "old": "Frontend interface (Admin and Student portal)",
+    "new": "Frontend interfaces for admin and student users"
+  },
+  {
+    "old": "Backend server using Flask",
+    "new": "A Flask-based backend server"
+  },
+  {
+    "old": "AI modules for face recognition and detection",
+    "new": "AI modules for recognition, anti-spoofing, and emotion detection"
+  },
+  {
+    "old": "GPS tracking system",
+    "new": "A GPS-based validation layer"
+  },
+  {
+    "old": "Database for storing records",
+    "new": "A database for record storage and retrieval"
+  },
+  {
+    "old": "All these components are connected in such a way that data flows smoothly from one part to another.",
+    "new": "This structure allows data to move from user input to decision logic in a clear and traceable manner."
+  },
+  {
+    "old": "The user interface is designed to provide a simple and interactive experience for both admin and students. It is developed using HTML, CSS, and JavaScript.",
+    "new": "The user interface was designed to support quick attendance marking and simple administrative control. HTML, CSS, and JavaScript were used to keep the interface lightweight and browser accessible."
+  },
+  {
+    "old": "The design is divided into two main sections:",
+    "new": "The interface is divided into two primary views:"
+  },
+  {
+    "old": "Admin Interface",
+    "new": "Admin interface"
+  },
+  {
+    "old": "Allows the admin to create and manage class sessions",
+    "new": "Session creation and management controls"
+  },
+  {
+    "old": "Provides options to set GPS location and time limits",
+    "new": "Location, radius, and timing configuration"
+  },
+  {
+    "old": "Displays attendance reports and analytics",
+    "new": "Attendance reports and summary analytics"
+  },
+  {
+    "old": "Student Interface",
+    "new": "Student interface"
+  },
+  {
+    "old": "Allows students to log in and access the attendance system",
+    "new": "Login and attendance access dashboard"
+  },
+  {
+    "old": "Provides a camera interface for capturing face",
+    "new": "Webcam-based face capture interface"
+  },
+  {
+    "old": "Displays real-time attendance status and tracking information",
+    "new": "Real-time feedback for attendance and tracking status"
+  },
+  {
+    "old": "The interface is designed in such a way that users can easily understand and operate the system without confusion.",
+    "new": "The user interface emphasizes clarity so that users can understand each step of the attendance process without additional training."
+  },
+  {
+    "old": "The backend part of the system is developed using Flask in Python. It acts like the brain of the system where all processing and decision-making takes place.",
+    "new": "The backend was implemented in Flask and acts as the coordination layer for authentication, attendance rules, database communication, and AI module invocation."
+  },
+  {
+    "old": "The backend performs several important tasks such as:",
+    "new": "Its main responsibilities include:"
+  },
+  {
+    "old": "Handling login and authentication",
+    "new": "Handling login and session validation"
+  },
+  {
+    "old": "Managing attendance sessions",
+    "new": "Managing attendance-session lifecycle events"
+  },
+  {
+    "old": "Processing data received from frontend",
+    "new": "Processing requests received from the frontend"
+  },
+  {
+    "old": "Connecting AI models with the system",
+    "new": "Invoking AI models and location checks"
+  },
+  {
+    "old": "Storing and retrieving data from the database",
+    "new": "Writing and reading records from the database"
+  },
+  {
+    "old": "The backend is designed in such a way that it can handle multiple users without crashing.",
+    "new": "The backend logic was organized to support multiple users while maintaining a predictable attendance workflow."
+  },
+  {
+    "old": "Artificial Intelligence plays a key role in this system. Multiple models are integrated to improve accuracy and security.",
+    "new": "Artificial intelligence is central to the proposed system because the final attendance decision depends on more than one verification signal."
+  },
+  {
+    "old": "Face Recognition Model",
+    "new": "Face Recognition Model"
+  },
+  {
+    "old": "This model identifies the student based on facial features. It compares the captured image with stored data to verify identity.",
+    "new": "The face recognition module compares the captured facial image with registered student data to estimate identity consistency."
+  },
+  {
+    "old": "Anti-Spoofing Model",
+    "new": "Anti-Spoofing Model"
+  },
+  {
+    "old": "This model checks whether the face is real or fake. It prevents misuse by detecting images, videos, or printed photos.",
+    "new": "The anti-spoofing module helps distinguish a live subject from printed, replayed, or screen-based fraudulent inputs."
+  },
+  {
+    "old": "Emotion Detection Model",
+    "new": "Emotion Detection Model"
+  },
+  {
+    "old": "This model analyses facial expressions and provides additional verification. It also helps in understanding user behaviour.",
+    "new": "The emotion-detection module adds contextual facial analysis and demonstrates how auxiliary AI signals can be integrated into the same platform."
+  },
+  {
+    "old": "All these models work together to ensure that attendance is recorded only for genuine users.",
+    "new": "Together, these models provide a stronger verification pipeline than a single-model attendance system."
+  },
+  {
+    "old": "GPS tracking is used to check whether the student is physically present in the correct location.",
+    "new": "The GPS module is used to estimate whether the student remains within the authorized location during the verification period."
+  },
+  {
+    "old": "The working of this module is as follows:",
+    "new": "Its working principle can be summarized as follows:"
+  },
+  {
+    "old": "The system collects real-time location using browser permission",
+    "new": "The browser collects user location after permission is granted"
+  },
+  {
+    "old": "The admin sets a fixed location and allowed radius",
+    "new": "The admin defines the reference location and acceptable radius"
+  },
+  {
+    "old": "The system calculates the distance between both locations",
+    "new": "The system computes distance between the reported and approved coordinates"
+  },
+  {
+    "old": "If the student is within the allowed range, attendance is considered valid",
+    "new": "Attendance remains valid only when the user stays within the defined range"
+  },
+  {
+    "old": "One important part here is that tracking continues for a certain time after attendance is marked. This ensures that the student does not leave the location immediately.",
+    "new": "Continuing location checks after initial marking makes it harder to record attendance and then immediately leave the class area."
+  },
+  {
+    "old": "The database is used to store all the important data of the system. SQLite is used because it is simple and does not require complex setup.",
+    "new": "The database layer stores the persistent information required for attendance execution and later review. SQLite was selected because it is simple to manage in a prototype environment."
+  },
+  {
+    "old": "The database stores:",
+    "new": "The database maintains records for:"
+  },
+  {
+    "old": "Student details",
+    "new": "Student profiles"
+  },
+  {
+    "old": "Attendance records",
+    "new": "Attendance entries"
+  },
+  {
+    "old": "Session timings",
+    "new": "Session schedules and timing data"
+  },
+  {
+    "old": "GPS-related data",
+    "new": "GPS and validation-related logs"
+  },
+  {
+    "old": "The structure is kept simple so that data can be accessed quickly whenever required.",
+    "new": "A compact schema was preferred so that core operations remain easy to test, query, and maintain."
+  },
+  {
+    "old": "The system generates different types of outputs based on user interaction and system processing.",
+    "new": "The system produces multiple output types during normal operation, ranging from live validation feedback to summary reporting."
+  },
+  {
+    "old": "During the attendance process, the system displays:",
+    "new": "During attendance marking, the interface displays the following real-time information:"
+  },
+  {
+    "old": "Live camera feed",
+    "new": "Live webcam feed"
+  },
+  {
+    "old": "Face detection and recognition results",
+    "new": "Recognition and liveness-verification results"
+  },
+  {
+    "old": "Emotion detection status",
+    "new": "Emotion-analysis output"
+  },
+  {
+    "old": "GPS coordinates and distance",
+    "new": "Current GPS coordinates and distance status"
+  },
+  {
+    "old": "These outputs help users understand what the system is doing in real time.",
+    "new": "These outputs allow the user to understand the verification process while it is happening."
+  },
+  {
+    "old": "The system shows different attendance states depending on the situation:",
+    "new": "The application presents different attendance states based on verification progress:"
+  },
+  {
+    "old": "Not Marked – Student has not marked attendance",
+    "new": "Not Marked: no attendance attempt has been completed"
+  },
+  {
+    "old": "Marked but Not Finalized – Attendance recorded but under GPS tracking",
+    "new": "Marked but Not Finalized: initial verification passed and GPS tracking is still active"
+  },
+  {
+    "old": "Successfully Recorded – Attendance confirmed after validation",
+    "new": "Successfully Recorded: attendance was confirmed after validation"
+  },
+  {
+    "old": "Cancelled – Attendance rejected due to location mismatch",
+    "new": "Cancelled: attendance was rejected because the required conditions were not met"
+  },
+  {
+    "old": "These messages make the system transparent and easy to understand.",
+    "new": "Clear state messages improve transparency for both students and administrators."
+  },
+  {
+    "old": "The system also provides analytical information, which helps users track performance:",
+    "new": "The system also generates analytical outputs that help users review participation patterns:"
+  },
+  {
+    "old": "Total number of classes attended",
+    "new": "Total classes attended"
+  },
+  {
+    "old": "Subject-wise attendance details",
+    "new": "Subject-wise attendance summary"
+  },
+  {
+    "old": "Attendance percentage",
+    "new": "Attendance percentage"
+  },
+  {
+    "old": "Weekly or monthly trends",
+    "new": "Weekly or monthly attendance trends"
+  },
+  {
+    "old": "These insights help both students and administrators in monitoring attendance effectively.",
+    "new": "These outputs support monitoring and basic decision-making at both the student and admin levels."
+  },
+  {
+    "old": "The literature review helps in understanding how attendance systems have evolved over time and what techniques have already been used. By studying existing methods, it becomes easier to identify their limitations and understand why a new approach is required.",
+    "new": "This chapter reviews the major attendance approaches reported in practice and in prior academic work. The review is used to identify the strengths of existing systems and the limitations that motivate the proposed multimodal design."
+  },
+  {
+    "old": "Different types of attendance systems have been developed in the past using technologies such as RFID, biometrics, and computer vision. However, each system has certain drawbacks, especially when it comes to accuracy and security.",
+    "new": "Earlier attendance solutions have relied on manual registers, RFID cards, biometric devices, mobile applications, and computer-vision-based systems. While each approach offers certain benefits, most of them face trade-offs in security, convenience, cost, or verification depth."
+  },
+  {
+    "old": "Several methods have been proposed and implemented for attendance management. Some of the commonly used systems are discussed below.",
+    "new": "The main categories of existing attendance systems are summarized below."
+  },
+  {
+    "old": "Manual attendance is one of the oldest methods used in schools and colleges. In this method, attendance is recorded using registers or sheets.",
+    "new": "Manual attendance depends on paper registers or verbal roll calls, making it easy to deploy but inefficient in large classrooms [Add citation on manual attendance limitations]."
+  },
+  {
+    "old": "It is simple to use and does not require any technology",
+    "new": "Simple to understand and implement"
+  },
+  {
+    "old": "However, it takes a lot of time, especially in large classes",
+    "new": "Consumes lecture time as class size increases"
+  },
+  {
+    "old": "There is a high chance of human error",
+    "new": "Susceptible to human error during record entry"
+  },
+  {
+    "old": "Proxy attendance is very common",
+    "new": "Provides no built-in safeguard against proxy attendance"
+  },
+  {
+    "old": "Because of these limitations, manual systems are not suitable for modern requirements.",
+    "new": "For modern classrooms, manual methods are easy to start with but weak in speed, auditability, and security."
+  },
+  {
+    "old": "RFID systems use cards or tags to mark attendance. Each student is given a unique card that is scanned to record presence.",
+    "new": "RFID-based attendance systems assign each student a card or tag that is scanned at the point of entry [Add citation on RFID attendance systems]."
+  },
+  {
+    "old": "Faster than manual systems",
+    "new": "Faster than manual register-based attendance"
+  },
+  {
+    "old": "Easy to implement",
+    "new": "Relatively low complexity during day-to-day use"
+  },
+  {
+    "old": "But not secure, as students can exchange cards",
+    "new": "Cards can be shared or exchanged among students"
+  },
+  {
+    "old": "Does not verify the actual identity of the person",
+    "new": "The scan confirms possession of a card, not the true identity of the user"
+  },
+  {
+    "old": "Although RFID systems improve speed, they still fail to ensure authenticity.",
+    "new": "RFID improves speed, but its security is limited unless it is combined with stronger identity verification."
+  },
+  {
+    "old": "Biometric systems use fingerprints, iris scans, or other physical features for identification.",
+    "new": "Biometric attendance systems use fingerprints, iris patterns, or similar physical traits to identify users [Add citation on biometric attendance systems]."
+  },
+  {
+    "old": "Provides better security compared to RFID",
+    "new": "Offers stronger identity assurance than card-based systems"
+  },
+  {
+    "old": "Reduces chances of proxy attendance",
+    "new": "Reduces the chance of intentional proxy attendance"
+  },
+  {
+    "old": "Requires special hardware devices",
+    "new": "Requires dedicated hardware installation and maintenance"
+  },
+  {
+    "old": "May not be convenient in all situations",
+    "new": "May be less convenient in crowded or shared environments"
+  },
+  {
+    "old": "These systems are widely used but can be costly and difficult to maintain.",
+    "new": "Biometric systems are effective, but cost, hygiene, and device dependency can limit their adoption."
+  },
+  {
+    "old": "Face recognition systems use cameras and image processing techniques to identify individuals.",
+    "new": "Face-recognition-based attendance systems identify users through image capture and feature matching [Add citation on face-recognition attendance systems]."
+  },
+  {
+    "old": "Contactless and easy to use",
+    "new": "Non-contact and easy to integrate with webcams"
+  },
+  {
+    "old": "Suitable for modern applications",
+    "new": "Suitable for smart classrooms and web-based platforms"
+  },
+  {
+    "old": "Can work with existing devices like webcams",
+    "new": "Can reuse existing camera hardware in many environments"
+  },
+  {
+    "old": "However, some systems can be fooled using photos or videos",
+    "new": "Performance may degrade under spoofing attempts or poor lighting"
+  },
+  {
+    "old": "Many systems do not include anti-spoofing, which makes them less secure.",
+    "new": "Without liveness detection, face recognition alone may not be sufficient for secure attendance confirmation."
+  },
+  {
+    "old": "Some systems allow students to mark attendance through mobile apps or websites.",
+    "new": "Online or app-based attendance systems allow students to mark attendance through mobile or web interfaces [Add citation on app-based attendance systems]."
+  },
+  {
+    "old": "Convenient and easy to access",
+    "new": "Convenient and accessible from different devices"
+  },
+  {
+    "old": "No hardware required",
+    "new": "Easy to deploy without specialized hardware"
+  },
+  {
+    "old": "But lacks proper identity and location verification",
+    "new": "Often lacks dependable identity and location checks"
+  },
+  {
+    "old": "Can be misused if not properly controlled.",
+    "new": "Can be misused if attendance is self-reported without validation"
+  },
+  {
+    "old": "These systems are useful but not reliable for strict attendance monitoring.",
+    "new": "These systems improve accessibility but are not always suitable where strict verification is required."
+  },
+  {
+    "old": "Although many attendance systems have been developed using various technologies, several important limitations still exist. These gaps highlight the need for a more advanced, secure, and intelligent attendance system.",
+    "new": "The literature survey indicates that previous systems solve only part of the attendance problem. The following gaps are especially relevant to the proposed work."
+  },
+  {
+    "old": "RFID-based systems are widely used due to their simplicity and speed. However, they suffer from serious security issues. Students can easily exchange RFID cards and mark attendance on behalf of others, leading to proxy attendance. This makes the system unreliable in maintaining authenticity.",
+    "new": "RFID-based solutions are fast, but they do not reliably prevent card sharing or proxy marking. This creates a security gap in environments where authenticity is important [Add citation supporting RFID security limitations]."
+  },
+  {
+    "old": "Biometric systems such as fingerprint scanners provide better accuracy, but they require physical contact. This can be inconvenient in crowded environments and raises hygiene concerns. Additionally, these systems involve higher installation and maintenance costs, making them less flexible for large-scale deployment",
+    "new": "Fingerprint and similar biometric systems improve verification, yet they depend on extra hardware, regular maintenance, and physical interaction. These factors reduce flexibility in large or resource-constrained deployments [Add citation supporting biometric deployment constraints]."
+  },
+  {
+    "old": "Face recognition systems are contactless and efficient, but many existing implementations lack anti-spoofing mechanisms. As a result, they can be easily deceived using photographs or recorded videos. This reduces the overall security and trustworthiness of the system.",
+    "new": "Many face recognition systems focus only on identity matching and do not include strong anti-spoofing checks. As a result, images or replayed media can sometimes bypass the system [Add citation on spoofing risk in face-recognition systems]."
+  },
+  {
+    "old": "Most existing systems only verify identity but do not confirm whether the student is physically present in the classroom. Without location tracking, students can mark attendance from outside the designated area, which compromises the system’s accuracy.",
+    "new": "Identity validation alone is not enough if the system cannot confirm that the student is actually present in the authorized classroom area. The absence of location verification leaves room for misuse [Add citation on the need for location-aware attendance]."
+  },
+  {
+    "old": "Many current systems rely on a single technology such as RFID or biometrics. There is a lack of integration of multiple technologies like face recognition, emotion detection, and GPS tracking, which could collectively enhance accuracy and reliability.",
+    "new": "A major research gap is the lack of systems that combine face recognition, anti-spoofing, and location validation in one attendance workflow. A multimodal design can improve robustness because each module checks a different type of risk [Add citation on multimodal verification]."
+  },
+  {
+    "old": "Existing systems generally do not include intelligent features such as AI-based analysis or Chatbot assistance. There is no provision for automated insights, attendance analytics, or interactive support for students and administrators.",
+    "new": "Most reported attendance platforms also provide limited analytical support to end users. Interactive assistance, automatic summaries, and attendance insights are rarely integrated into the same solution [Add citation on intelligent attendance analytics]."
+  },
+  {
+    "old": "Many traditional systems have outdated interfaces that are not user-friendly. They lack proper dashboards, real-time updates, and interactive features, which reduces usability for both students and administrators.",
+    "new": "Another gap lies in user experience. Many existing systems prioritize backend validation but offer limited dashboard quality, poor feedback, or weak usability for students and administrators [Add citation on UX issues in academic systems]."
+  },
+  {
+    "old": "The methodology of this project describes the step-by-step approach followed to design and develop the smart attendance system. Instead of building the system in a single step, the work was carried out in multiple stages, starting from understanding the problem to implementing and testing different modules.",
+    "new": "The methodology adopted in this project follows a staged implementation strategy. Instead of building a single monolithic system, the work was divided into problem analysis, module development, system integration, and testing."
+  },
+  {
+    "old": "The main idea behind the methodology is to combine different technologies such as face recognition, anti-spoofing, emotion detection, and GPS tracking in a structured way. Each component is first developed individually and then integrated into a complete system.",
+    "new": "The core design decision was to combine facial verification, anti-spoofing, emotion analysis, and GPS monitoring into one operational pipeline. Each module was first evaluated independently and then connected through the web application."
+  },
+  {
+    "old": "Special attention was given to ensure that the system works in real-time and provides reliable results under practical conditions. The workflow is designed in such a way that attendance is not only marked but also verified before final confirmation.",
+    "new": "The workflow was designed for real-time use, with attention to response time, verification order, and practical classroom constraints. Attendance is therefore treated as a validated process rather than a single-click event."
+  },
+  {
+    "old": "This section explains the basic hardware and software requirements needed to run the system properly. The aim was to use commonly available resources so that the system remains practical and cost-effective.",
+    "new": "The hardware and software requirements were selected to keep the prototype practical, affordable, and reproducible on standard student-level computing resources."
+  },
+  {
+    "old": "The hardware requirements for this project are simple and easily available:",
+    "new": "The prototype uses the following hardware resources:"
+  },
+  {
+    "old": "A computer or laptop with moderate processing capability",
+    "new": "A computer or laptop with sufficient processing capability for browser and backend execution"
+  },
+  {
+    "old": "A webcam for capturing facial images in real-time",
+    "new": "A webcam for real-time face capture during attendance marking"
+  },
+  {
+    "old": "A stable internet connection for GPS tracking and communication",
+    "new": "A stable internet connection for web access and geolocation services"
+  },
+  {
+    "old": "The webcam is an important part of the system because it is used to capture images for face recognition and analysis. A good camera improves detection accuracy, especially under different lighting conditions.",
+    "new": "The webcam directly affects detection quality because clear facial input improves recognition, liveness checking, and emotion analysis."
+  },
+  {
+    "old": "The internet connection is mainly required for accessing location services and ensuring smooth communication between system components.",
+    "new": "Network stability is important because GPS-related communication and client-server interaction depend on timely data exchange."
+  },
+  {
+    "old": "The system is developed using a combination of software tools that support both AI and web development.",
+    "new": "The software stack combines tools for backend development, computer vision, and user interface design."
+  },
+  {
+    "old": "Python Programming Language",
+    "new": "Python Programming Language"
+  },
+  {
+    "old": "Python is used because it is easy to understand and has strong support for machine learning and computer vision libraries.",
+    "new": "Python was used as the primary implementation language because of its mature ecosystem for machine learning, image processing, and rapid prototyping."
+  },
+  {
+    "old": "Flask Framework",
+    "new": "Flask Framework"
+  },
+  {
+    "old": "Flask is used to build the backend of the system. It handles requests, manages sessions, and connects different parts of the application.",
+    "new": "Flask was used to build the server-side workflow, manage requests, connect modules, and support session-level application logic."
+  },
+  {
+    "old": "OpenCV Library",
+    "new": "OpenCV Library"
+  },
+  {
+    "old": "OpenCV is used for image processing tasks such as face detection and camera handling.",
+    "new": "OpenCV was used for camera interaction, image capture, and core computer-vision operations."
+  },
+  {
+    "old": "AI Models",
+    "new": "AI Models"
+  },
+  {
+    "old": "Different models are used for face recognition, anti-spoofing, and emotion detection. These models help in verifying user identity and improving system security.",
+    "new": "Separate AI models were integrated for face recognition, anti-spoofing, and emotion detection so that the system could verify attendance from multiple perspectives."
+  },
+  {
+    "old": "SQLite Database",
+    "new": "SQLite Database"
+  },
+  {
+    "old": "SQLite is used to store student details, attendance records, and session data. It is simple and does not require complex setup.",
+    "new": "SQLite was used to store student data, attendance logs, and session-level records without requiring a complex database setup."
+  },
+  {
+    "old": "Frontend Technologies (HTML, CSS, JavaScript)",
+    "new": "Frontend Technologies (HTML, CSS, JavaScript)"
+  },
+  {
+    "old": "These are used to design the user interface and make the system interactive.",
+    "new": "These technologies were used to build the admin and student interfaces and to present real-time status information in the browser."
+  },
+  {
+    "old": "All these tools are selected because they are efficient and suitable for real-time applications.",
+    "new": "This stack was selected because it supports a complete prototype with moderate hardware requirements and straightforward deployment."
+  }
+]

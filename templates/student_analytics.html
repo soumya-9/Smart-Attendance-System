@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Personal Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        {% set student_page_heading = "Personal Analytics" %}
+        {% set student_page_description = "Your attendance percentage, subject performance, and recent trend are kept on a dedicated analytics page." %}
+        {% include "student/_hero.html" %}
+        {% include "student/_analytics_panel.html" %}
+    </div>
+</div>
+{% endblock %}

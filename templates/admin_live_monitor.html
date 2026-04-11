@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Live Session Monitor{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">LIVE SESSION MONITOR</p>
+            <h1 class="main-title mb-2">Live Session Monitor</h1>
+            <p class="sub-title mb-0">Watch active, delayed, cancelled, and upcoming class sessions from a cleaner operational page with lightweight auto-refresh.</p>
+        </div>
+
+        <div class="admin-metric-grid mb-4 reveal-section">
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">LIVE NOW</p>
+                <h3>{{ live_monitor_summary.live_count }}</h3>
+                <p class="meta-line mb-0">Active or delayed sessions</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">UPCOMING</p>
+                <h3>{{ live_monitor_summary.upcoming_count }}</h3>
+                <p class="meta-line mb-0">Still scheduled today</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">COMPLETED</p>
+                <h3>{{ live_monitor_summary.completed_count }}</h3>
+                <p class="meta-line mb-0">Finished sessions today</p>
+            </div>
+            <div class="panel-card admin-metric-card">
+                <p class="badge-text mb-2">GPS READY</p>
+                <h3>{{ live_monitor_summary.gps_configured_count }}</h3>
+                <p class="meta-line mb-0">Sessions with GPS configured</p>
+            </div>
+        </div>
+
+        <div class="panel-card reveal-section mb-4"
+             id="adminLiveTrackingPanel"
+             data-admin-tracking-panel
+             data-endpoint="{{ url_for('admin_live_tracking_api') }}"
+             data-selected-date="{{ today_iso }}"
+             data-auto-refresh-ms="10000">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="badge-text mb-2">LIVE GPS TRACKING</p>
+                    <h3 class="panel-title mb-1">Provisional attendance monitor</h3>
+                    <p class="meta-line mb-0">Track students whose attendance is still provisional until the GPS timer finishes.</p>
+                </div>
+                <span class="legend-chip legend-upcoming">Auto refresh every 10s</span>
+            </div>
+            <div class="admin-mini-list" data-admin-tracking-body>
+                {% for item in active_tracking_rows %}
+                <div class="admin-mini-item">
+                    <div>
+                        <h4>{{ item.student_name }} • {{ item.subject_name }}</h4>
+                        <p>{{ item.class_name }} | {{ item.tracking_state }} | Final target: {{ item.final_status }}</p>
+                        <p class="meta-line mb-0">
+                            Distance: {{ item.distance_meters if item.distance_meters is not none else 'N/A' }} m |
+                            Accuracy: {{ item.gps_accuracy_meters if item.gps_accuracy_meters is not none else 'N/A' }} m |
+                            Radius: {{ item.allowed_radius_meters if item.allowed_radius_meters is not none else 'N/A' }} m |
+                            Range: {{ item.range_state or 'N/A' }}
+                        </p>
+                        <p class="meta-line mb-0">
+                            Current GPS: {{ item.last_location_latitude if item.last_location_latitude is not none else 'N/A' }}, {{ item.last_location_longitude if item.last_location_longitude is not none else 'N/A' }} |
+                            Reference GPS: {{ item.reference_latitude if item.reference_latitude is not none else 'N/A' }}, {{ item.reference_longitude if item.reference_longitude is not none else 'N/A' }}
+                        </p>
+                        <p class="meta-line mb-0">{{ item.message }}{% if item.tracking_message %} | {{ item.tracking_message }}{% endif %}</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="legend-chip {% if item.attendance_status == 'CANCELLED' %}legend-absent{% elif item.attendance_status in ['FINALIZED', 'FINAL'] %}legend-present{% elif item.attendance_status == 'TRACKING_ACTIVE' %}legend-present{% else %}legend-upcoming{% endif %}">{{ item.attendance_status }}</span>
+                        <p class="meta-line mb-0 mt-2" data-admin-tracking-countdown data-expires-at="{{ item.tracking_expires_at }}">
+                            Tracking Time Left: {% if item.remaining_seconds %}{{ '%02d:%02d:%02d'|format((item.remaining_seconds // 3600), ((item.remaining_seconds % 3600) // 60), (item.remaining_seconds % 60)) }}{% else %}N/A{% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <p class="meta-line mb-0">No tracked attendance records are active right now.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel-card weekly-schedule-panel reveal-section mb-4"
+             data-schedule-role="admin"
+             data-endpoint="{{ url_for('admin_schedule_api') }}"
+             data-selected-date="{{ today_iso }}"
+             data-auto-refresh-ms="30000">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="badge-text mb-2">AUTO-REFRESH MONITOR</p>
+                    <h3 class="panel-title mb-1">Live week view</h3>
+                    <p class="meta-line mb-0">This monitor refreshes every 30 seconds so the countdowns and session states stay current.</p>
+                </div>
+                <div class="schedule-legend">
+                    <span class="legend-chip legend-upcoming">Upcoming</span>
+                    <span class="legend-chip legend-present">Open</span>
+                    <span class="legend-chip legend-absent">Closed / Cancelled</span>
+                    <span class="legend-chip legend-neutral">Completed</span>
+                </div>
+            </div>
+            <div class="weekly-calendar-bar mb-3" data-week-bar>
+                {% for day in admin_week_dates %}
+                <button class="week-day-btn {% if day.is_today %}is-selected{% endif %}" type="button" data-date="{{ day.iso_date }}">
+                    <span class="week-day-label">{{ day.day_short }}</span>
+                    <span class="week-day-number">{{ day.day_number }}</span>
+                    <span class="week-day-month">{{ day.month_short }}</span>
+                </button>
+                {% endfor %}
+            </div>
+            <div class="schedule-toolbar mb-3">
+                <input type="text" class="form-control form-input" placeholder="Filter by class, subject, or teacher..." data-schedule-filter>
+            </div>
+            <div class="schedule-day-shell" data-schedule-body>
+                <div class="schedule-loading">
+                    <div class="schedule-skeleton"></div>
+                    <div class="schedule-skeleton"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Today's live and delayed sessions</h3>
+                        <a href="{{ url_for('admin_sessions') }}" class="btn quick-btn">Open Session Controls</a>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in today_sessions if item.session_status in ['Active', 'Delayed'] %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                <p>{{ item.start_time[:5] }} - {{ item.end_time[:5] }} | {{ item.teacher_name }}</p>
+                                <p>Present {{ item.present_count or 0 }} | Late {{ item.late_count or 0 }} | Absent {{ item.absent_count or 0 }}</p>
+                            </div>
+                            <span class="legend-chip {% if item.session_status == 'Active' %}legend-present{% else %}legend-upcoming{% endif %}">
+                                {{ item.session_status }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No live or delayed session is running right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Upcoming and completed today</h3>
+                        <span class="meta-line">Operational status snapshot</span>
+                    </div>
+                    <div class="admin-mini-list">
+                        {% for item in today_sessions %}
+                        <div class="admin-mini-item">
+                            <div>
+                                <h4>{{ item.class_name }} • {{ item.subject_name }}</h4>
+                                <p>{{ item.start_time[:5] }} - {{ item.end_time[:5] }} | Open {{ item.attendance_open_time[:5] }} | Late close {{ item.late_close_time[:5] }}</p>
+                            </div>
+                            <span class="legend-chip {% if item.session_status == 'Active' %}legend-present{% elif item.session_status in ['Scheduled', 'Delayed'] %}legend-upcoming{% elif item.session_status == 'Cancelled' %}legend-absent{% else %}legend-neutral{% endif %}">
+                                {{ item.session_status }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No sessions are scheduled today.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

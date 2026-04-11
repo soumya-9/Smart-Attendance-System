@@ -1,0 +1,83 @@
+<div class="panel-card reveal-section"
+     data-student-dashboard-charts
+     data-summary='{{ student_summary | tojson | safe }}'>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h3 class="panel-title mb-0">Personal Analytics</h3>
+        <span class="meta-line">Attendance percentage, subject performance, and recent weekly trend.</span>
+    </div>
+    <div class="dashboard-analytics-grid">
+        <div class="analytics-card">
+            <div class="analytics-card-header">
+                <h4>Attendance %</h4>
+                <span>Present vs absent</span>
+            </div>
+            <div class="analytics-canvas-wrap chart-loading-shell">
+                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                <canvas data-student-chart="attendance-overview"></canvas>
+            </div>
+        </div>
+        <div class="analytics-card">
+            <div class="analytics-card-header">
+                <h4>Subject-Wise</h4>
+                <span>Best and lowest subjects</span>
+            </div>
+            <div class="analytics-canvas-wrap chart-loading-shell">
+                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                <canvas data-student-chart="subject-wise"></canvas>
+            </div>
+        </div>
+        <div class="analytics-card">
+            <div class="analytics-card-header">
+                <h4>Weekly Trend</h4>
+                <span>Recent class history</span>
+            </div>
+            <div class="analytics-canvas-wrap chart-loading-shell">
+                <div class="chart-loading-overlay"><div class="chart-loading-spinner"></div></div>
+                <canvas data-student-chart="weekly-trend"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-6">
+        <div class="panel-card h-100 reveal-section">
+            <h3 class="panel-title mb-3">Attendance Summary</h3>
+            <div class="stat-grid student-stat-grid">
+                <div class="stat-box">
+                    <h4>Total Classes</h4>
+                    <p data-counter="{{ student_summary.total_classes }}">{{ student_summary.total_classes }}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Classes Attended</h4>
+                    <p data-counter="{{ student_summary.attended_classes }}">{{ student_summary.attended_classes }}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Absent Days</h4>
+                    <p data-counter="{{ student_summary.absent_classes }}">{{ student_summary.absent_classes }}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Attendance %</h4>
+                    <p data-counter="{{ student_summary.attendance_percentage }}">{{ student_summary.attendance_percentage }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel-card h-100 reveal-section">
+            <h3 class="panel-title mb-3">Subject-Wise Attendance</h3>
+            {% if student_summary.subject_stats %}
+            <div class="student-list">
+                {% for item in student_summary.subject_stats %}
+                <div class="student-item">
+                    <h4>{{ item.subject_name }}</h4>
+                    <p>{{ item.attended_classes }}/{{ item.total_classes }} | {{ item.attendance_percentage }}%</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="meta-line mb-0">No subject analytics available yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

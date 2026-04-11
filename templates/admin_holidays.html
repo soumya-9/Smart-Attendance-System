@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Holiday Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4 reveal-section">
+            <p class="badge-text mb-2">HOLIDAY MANAGEMENT</p>
+            <h1 class="main-title mb-2">Holiday Management</h1>
+            <p class="sub-title mb-0">Keep academic off-days and special no-class dates in a cleaner, dedicated workspace without crowding the main dashboard.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-5">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">ADD HOLIDAY</p>
+                            <h3 class="panel-title mb-1">Save holiday or off-day</h3>
+                            <p class="meta-line mb-0">If holiday editing is not already part of the backend, this page preserves the current add/delete workflow safely.</p>
+                        </div>
+                        <span class="legend-chip legend-upcoming">{{ holidays|length }} saved</span>
+                    </div>
+                    <form method="post" action="{{ url_for('create_holiday') }}" class="form-grid">
+                        <input type="hidden" name="next" value="{{ url_for('admin_holidays') }}">
+                        <input type="date" name="holiday_date" class="form-control form-input" required>
+                        <input type="text" name="title" class="form-control form-input" placeholder="Holiday title" required>
+                        <textarea name="description" class="form-control form-input" rows="4" placeholder="Description"></textarea>
+                        <button class="btn send-btn" type="submit">Save Holiday</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="panel-card reveal-section h-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <p class="badge-text mb-2">HOLIDAY LIST</p>
+                            <h3 class="panel-title mb-1">Saved no-class dates</h3>
+                            <p class="meta-line mb-0">A clear chronological list of academic holidays and off-days.</p>
+                        </div>
+                    </div>
+                    <div class="student-list">
+                        {% for holiday in holidays %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ holiday.title }}</h4>
+                                    <p>{{ holiday.holiday_date }}</p>
+                                    {% if holiday.description %}
+                                    <p>{{ holiday.description }}</p>
+                                    {% endif %}
+                                </div>
+                                <form method="post" action="{{ url_for('remove_holiday', holiday_id=holiday.id) }}">
+                                    <input type="hidden" name="next" value="{{ url_for('admin_holidays') }}">
+                                    <button class="btn delete-btn" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No holiday or off-day has been saved yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

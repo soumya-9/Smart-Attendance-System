@@ -1,0 +1,35 @@
+<div class="panel-card assistant-panel reveal-section mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <p class="badge-text mb-2">STUDENT ATTENDANCE ASSISTANT</p>
+            <h3 class="panel-title mb-1">Hi, {{ student.name }}!</h3>
+            <p class="meta-line mb-0">You have attended {{ student_summary.attendance_percentage }}% of your classes. Ask about your summary, subject percentages, weekly attendance, or your attendance graph.</p>
+        </div>
+        <span class="legend-chip legend-present">Your Data Only</span>
+    </div>
+
+    <div class="assistant-card" data-assistant-role="student" data-endpoint="{{ url_for('student_chat') }}">
+        <div class="assistant-chat-glow assistant-chat-glow-one"></div>
+        <div class="assistant-chat-glow assistant-chat-glow-two"></div>
+        <div class="assistant-response" data-assistant-response>
+            <div class="assistant-message-row assistant-message-row-ai">
+                <div class="assistant-avatar assistant-avatar-ai">AI</div>
+                <div class="assistant-message-stack">
+                    <div class="assistant-bubble assistant-bubble-ai">Welcome back, {{ student.name }}. I can explain your attendance summary, subject-wise performance, weekly attendance, and attendance percentage.</div>
+                    <div class="assistant-meta">Smart Attendance System • just now</div>
+                </div>
+            </div>
+        </div>
+        <div class="assistant-quick-actions mt-3">
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="My attendance summary">My Attendance Summary</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="Show my subject-wise attendance percentage">Subject-wise Attendance</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="How many classes happened this week?">Weekly Attendance</button>
+            <button class="btn quick-btn assistant-quick-btn" type="button" data-query="What is my attendance percentage?">Attendance Percentage</button>
+        </div>
+        <div class="assistant-input-area mt-3">
+            <input type="text" class="form-control form-input assistant-query-input" placeholder="Ask about your attendance...">
+            <button class="btn quick-btn assistant-voice-btn" type="button" aria-label="Start voice input" data-idle-html='<i class="bi bi-mic-fill"></i>' data-listening-html='<i class="bi bi-mic-fill"></i><span class="assistant-voice-state">Listening</span>'><i class="bi bi-mic-fill"></i></button>
+            <button class="btn send-btn assistant-send-btn" type="button">Ask</button>
+        </div>
+    </div>
+</div>

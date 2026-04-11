@@ -1,0 +1,37 @@
+<div class="panel-card weekly-schedule-panel reveal-section"
+     id="studentWeeklySchedulePanel"
+     data-schedule-role="student"
+     data-endpoint="{{ url_for('student_schedule_api') }}"
+     data-selected-date="{{ today_iso }}">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h3 class="panel-title mb-0">Weekly Class Schedule</h3>
+            <span class="meta-line">Select a date to load only that day’s scheduled classes in this panel.</span>
+        </div>
+        <div class="schedule-legend">
+            <span class="legend-chip legend-upcoming">Upcoming</span>
+            <span class="legend-chip legend-present">Active</span>
+            <span class="legend-chip legend-absent">Cancelled</span>
+            <span class="legend-chip legend-neutral">Completed</span>
+            <span class="legend-chip legend-marked">Attendance Marked</span>
+        </div>
+    </div>
+    <div class="weekly-calendar-bar mb-3" data-week-bar>
+        {% for day in student_week_dates %}
+        <button class="week-day-btn {% if day.is_today %}is-selected{% endif %}" type="button" data-date="{{ day.iso_date }}">
+            <span class="week-day-label">{{ day.day_short }}</span>
+            <span class="week-day-number">{{ day.day_number }}</span>
+            <span class="week-day-month">{{ day.month_short }}</span>
+        </button>
+        {% endfor %}
+    </div>
+    <div class="schedule-toolbar mb-3">
+        <input type="text" class="form-control form-input" placeholder="Filter by subject..." data-schedule-filter>
+    </div>
+    <div class="schedule-day-shell" data-schedule-body>
+        <div class="schedule-loading">
+            <div class="schedule-skeleton"></div>
+            <div class="schedule-skeleton"></div>
+        </div>
+    </div>
+</div>

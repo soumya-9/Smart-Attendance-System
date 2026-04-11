@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Students{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <p class="badge-text mb-2">REGISTERED STUDENTS</p>
+                    <h1 class="main-title mb-2">Attendance Scanner</h1>
+                    <p class="sub-title mb-0">Capture and analyze a registered student's face to credit attendance automatically.</p>
+                </div>
+                <div class="d-flex flex-column align-items-lg-end gap-3">
+                    <a href="{{ url_for('register_student') }}" class="btn send-btn">Register New Student</a>
+                    <div class="status-stack">
+                    <div class="status-box {{ 'status-box-warning' if not engine_state.recognition_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ 'Recognition ready' if engine_state.recognition_ready else 'Recognition not ready' }}</span>
+                    </div>
+                    <div class="status-box {{ 'status-box-warning' if not engine_state.emotion_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ 'Emotion ready' if engine_state.emotion_ready else 'Emotion not ready' }}</span>
+                    </div>
+                    <div class="status-box {{ 'status-box-danger' if not gps_tracker_state.is_ready else '' }}">
+                        <div class="status-dot"></div>
+                        <span>{{ gps_tracker_state.label }}</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="panel-card h-100">
+                    <h3 class="panel-title mb-3">Face Recognition Attendance</h3>
+                    <p class="meta-line mb-3">Capture one student at a time. During scan, turn your face slightly left or right so the anti-spoof check can confirm a real live face.</p>
+                    <div class="video-wrapper mb-3">
+                        <video id="video" class="video-stream" autoplay playsinline muted></video>
+                        <canvas id="canvas" width="480" height="360" style="display:none;"></canvas>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn send-btn" id="startCameraBtn" type="button">Start Camera</button>
+                        <button class="btn quick-btn" id="captureBtn" type="button">Capture & Analyze</button>
+                    </div>
+
+                    <div class="result-box mt-3" id="resultBox">
+                        <p class="mb-1"><strong>Name:</strong> <span id="resultName">Not analyzed yet</span></p>
+                        <p class="mb-1"><strong>Emotion:</strong> <span id="resultEmotion">Not analyzed yet</span></p>
+                        <p class="mb-1"><strong>Liveness:</strong> <span id="resultLiveness">Not checked yet</span></p>
+                        <p class="mb-1"><strong>Face Detected:</strong> <span id="detectedFacesCount">0</span></p>
+                        <p class="mb-1"><strong>Matched Student:</strong> <span id="recognizedStudentsCount">0</span></p>
+                        <p class="mb-1"><strong>Status:</strong> <span id="resultMessage">{{ engine_state.startup_message }}</span></p>
+                        <div class="recognized-people-panel mt-3">
+                            <p class="mb-2"><strong>Recognized Student</strong></p>
+                            <div class="recognized-people-list" id="recognizedPeopleList">
+                                <p class="meta-line mb-0">No scan has been completed yet.</p>
+                            </div>
+                        </div>
+                        <div class="engine-status-grid mt-3">
+                            <div class="engine-pill" id="cameraStatus">Camera: Not started</div>
+                            <div class="engine-pill {{ 'engine-pill-ready' if engine_state.recognition_ready else 'engine-pill-warning' }}" id="recognitionStatus">
+                                Face Recognition: {{ 'Ready' if engine_state.recognition_ready else 'Not Ready' }}
+                            </div>
+                            <div class="engine-pill {{ 'engine-pill-ready' if engine_state.emotion_ready else 'engine-pill-warning' }}" id="emotionStatus">
+                                Emotion Engine: {{ 'Ready' if engine_state.emotion_ready else 'Not Ready' }}
+                            </div>
+                            <div class="engine-pill" id="faceStatus">Face Detection: Waiting</div>
+                        </div>
+                        <p class="engine-error mt-3 mb-1" id="recognitionError">
+                            {% if engine_state.recognition_error %}Recognition issue: {{ engine_state.recognition_error }}{% endif %}
+                        </p>
+                        <p class="engine-error mb-0" id="emotionError">
+                            {% if engine_state.emotion_error %}Emotion issue: {{ engine_state.emotion_error }}{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="panel-card mb-4">
+                    <h3 class="panel-title mb-3">{{ assistant_name }}</h3>
+                    <div class="chat-box" id="chatBox">
+                        <div class="bot-message">
+                            Hello, I am {{ assistant_name }}. Ask me about present students, absent students, attendance trends, the graph for the last 7 days, or a specific student.
+                        </div>
+                    </div>
+                    <div class="chat-input-area mt-3">
+                        <input type="text" id="userInput" class="form-control chat-input" placeholder="Ask {{ assistant_name }} something...">
+                        <button class="btn quick-btn" id="voiceInputBtn" type="button" aria-label="Voice input" title="Voice input">🎤</button>
+                        <button class="btn send-btn" id="sendMessageBtn" type="button">Send</button>
+                    </div>
+                    <div class="quick-actions mt-3">
+                        <button class="btn quick-btn" type="button" onclick="askQuick('How many students are present today?')">Present</button>
+                        <button class="btn quick-btn" type="button" onclick="askQuick('How many students are absent today?')">Absent</button>
+                        <button class="btn quick-btn" type="button" onclick="askQuick('Who is present today?')">Who Is Present</button>
+                        <button class="btn quick-btn" type="button" onclick="askQuick('Give me attendance trend summary')">Trend Summary</button>
+                        <button class="btn quick-btn" type="button" onclick="askQuick('Show attendance in last 7 days')">7-Day Graph</button>
+                    </div>
+                </div>
+
+                <div class="panel-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Attendance Graph: Last 7 Days</h3>
+                        <span class="meta-line">{{ stats.total_classes_last_3_days }} total classes this week</span>
+                    </div>
+                    <p class="meta-line mb-3">Dates used for this graph: {{ stats.recent_dates | join(', ') }}</p>
+                    <div class="attendance-chart" data-chart='{{ stats.chart_data | tojson | safe }}'></div>
+                </div>
+
+                <div class="panel-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="panel-title mb-0">Attendance Calendar</h3>
+                        <span class="meta-line">{{ stats.calendar_data.month_name }} {{ stats.calendar_data.year }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <label class="meta-line mb-0" for="calendarStudentSelect">Student</label>
+                        <select id="calendarStudentSelect" class="form-select form-input calendar-select">
+                            {% for student in stats.students %}
+                            <option value="{{ student.name }}">{{ student.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="calendar-legend mb-3">
+                        <span class="legend-chip legend-present">Present</span>
+                        <span class="legend-chip legend-absent">Not Attended</span>
+                        <span class="legend-chip legend-upcoming">Class Not Yet Happened</span>
+                    </div>
+                    <div
+                        class="attendance-calendar"
+                        id="attendanceCalendar"
+                        data-calendar='{{ stats.calendar_data | tojson | safe }}'></div>
+                </div>
+
+                <div class="panel-card">
+                    <h3 class="panel-title mb-3">Registered Student List</h3>
+                    <div class="student-list">
+                        {% for student in stats.students %}
+                        <div class="student-item">
+                            <div class="student-item-header">
+                                <div>
+                                    <h4>{{ student.name }}</h4>
+                                    <p>Class: {{ student.class_name }}</p>
+                                    <p>Enrollment: {{ student.enrollment_number }}</p>
+                                    <p>Email: {{ student.email }}</p>
+                                    <p>Mobile: {{ student.mobile_number or 'Not provided yet' }}</p>
+                                </div>
+                                <div class="student-action-stack">
+                                    <details class="edit-student-panel">
+                                        <summary class="btn edit-btn">Edit Details</summary>
+                                        <form
+                                            method="post"
+                                            action="{{ url_for('edit_student', student_id=student.id) }}"
+                                            enctype="multipart/form-data"
+                                            class="edit-student-form">
+                                            {% if student.image_path %}
+                                            <div>
+                                                <label class="form-label d-block">Active Face Photo</label>
+                                                <img
+                                                    src="{{ url_for('student_photo', student_id=student.id) }}"
+                                                    alt="{{ student.name }} reference photo"
+                                                    class="student-photo-preview">
+                                                <p class="meta-line mb-0 mt-2">This is the single active image used as the student's recognition reference.</p>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <label class="form-label">Student Name</label>
+                                                <input type="text" name="name" class="form-control form-input" value="{{ student.name }}" required>
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Class</label>
+                                                <input type="text" name="class_name" class="form-control form-input" value="{{ student.class_name }}" required>
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Enrollment Number</label>
+                                                <input type="text" name="enrollment_number" class="form-control form-input" value="{{ student.enrollment_number }}" required>
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Email ID</label>
+                                                <input type="email" name="email" class="form-control form-input" value="{{ student.email }}" required>
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Mobile Number</label>
+                                                <input type="tel" name="mobile_number" class="form-control form-input" value="{{ student.mobile_number or '' }}" pattern="^\+?[0-9]{10,15}$" placeholder="Enter mobile number">
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Change Picture</label>
+                                                <input type="file" name="photo_file" class="form-control form-input" accept=".jpg,.jpeg,.png">
+                                                <p class="meta-line mb-0 mt-2">Optional. Upload one clear front-facing photo. If uploaded, it replaces the old recognition photo.</p>
+                                            </div>
+                                            <button class="btn send-btn" type="submit">Save Changes</button>
+                                        </form>
+                                    </details>
+                                    <form
+                                        method="post"
+                                        action="{{ url_for('remove_student', student_id=student.id) }}"
+                                        onsubmit="return confirm('Delete {{ student.name }} and all stored attendance data?');">
+                                        <button class="btn delete-btn" type="submit">Delete Student</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="meta-line mb-0">No students registered yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

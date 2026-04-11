@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Register Student{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-4">
+    <div class="container">
+        <div class="hero-card mb-4">
+            <p class="badge-text mb-2">NEW STUDENT ENTRY</p>
+            <h1 class="main-title mb-2">Register Student</h1>
+            <p class="sub-title mb-0">Enter student details, capture a live photo, and {{ assistant_name }} will save the student in the registered student list.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="panel-card h-100">
+                    <h3 class="panel-title mb-3">Student Details</h3>
+                    <form method="post" id="studentRegistrationForm" class="form-grid">
+                        <div>
+                            <label class="form-label">Student Name</label>
+                            <input type="text" name="name" class="form-control form-input" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Class</label>
+                            <input type="text" name="class_name" class="form-control form-input" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Enrollment Number</label>
+                            <input type="text" name="enrollment_number" class="form-control form-input" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Email ID</label>
+                            <input type="email" name="email" class="form-control form-input" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Mobile Number</label>
+                            <input type="tel" name="mobile_number" class="form-control form-input" placeholder="Enter mobile number" pattern="^\+?[0-9]{10,15}$" required>
+                        </div>
+                        <input type="hidden" name="photo_data" id="registrationPhotoData">
+                        <button class="btn send-btn mt-2" type="submit">Register Student</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="panel-card h-100">
+                    <h3 class="panel-title mb-3">Capture Live Photo</h3>
+                    <div class="video-wrapper mb-3">
+                        <video id="registrationVideo" class="video-stream" autoplay playsinline muted></video>
+                        <canvas id="registrationCanvas" width="640" height="480" style="display:none;"></canvas>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn send-btn" id="startRegistrationCameraBtn" type="button">Start Camera</button>
+                        <button class="btn quick-btn" id="captureRegistrationBtn" type="button">Capture Photo</button>
+                    </div>
+                    <div class="result-box mt-3">
+                        <p class="mb-2"><strong>Capture Status:</strong> <span id="registrationMessage">Start camera and capture the student photo.</span></p>
+                        <p class="meta-line mb-2">
+                            After registration, a confirmation email is sent to the student's email address if SMTP is configured.
+                            <a class="text-white fw-semibold" href="{{ url_for('email_settings') }}">Open Email Settings</a>
+                        </p>
+                        <p class="meta-line mb-2">SMTP status: {{ 'Configured' if smtp_configured else 'Not configured yet' }}</p>
+                        <img id="registrationPreview" class="registration-preview" alt="Captured student preview">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

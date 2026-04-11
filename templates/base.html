@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Attendance System{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body data-theme="dark" class="{% if session.get('admin_logged_in') or session.get('student_logged_in') %}dashboard-body{% else %}public-body{% endif %}">
+    <div id="speechConfig"
+         data-voice-enabled="true"
+         data-welcome-admin="Welcome admin"
+         data-student-registered="Student registered successfully"
+         data-attendance-marked="Attendance marked successfully"></div>
+    <div class="global-ai-scene" data-ai-scene aria-hidden="true">
+        <canvas class="access-bg-canvas" data-access-bg-canvas></canvas>
+        <div class="access-bg-glow access-bg-glow-one" data-parallax-depth="8"></div>
+        <div class="access-bg-glow access-bg-glow-two" data-parallax-depth="12"></div>
+        <div class="access-bg-ring access-bg-ring-one" data-parallax-depth="10"></div>
+        <div class="access-bg-ring access-bg-ring-two" data-parallax-depth="14"></div>
+        <div class="access-bg-ring access-bg-ring-three" data-parallax-depth="18"></div>
+        <div class="access-bg-hud access-bg-hud-one" data-parallax-depth="9"></div>
+        <div class="access-bg-hud access-bg-hud-two" data-parallax-depth="15"></div>
+        <div class="access-bg-particles">
+            <span class="particle particle-1"></span>
+            <span class="particle particle-2"></span>
+            <span class="particle particle-3"></span>
+            <span class="particle particle-4"></span>
+            <span class="particle particle-5"></span>
+            <span class="particle particle-6"></span>
+            <span class="particle particle-7"></span>
+            <span class="particle particle-8"></span>
+        </div>
+        <div class="access-bg-parallax access-bg-head-layer" data-parallax-depth="18">
+            <svg class="access-bg-head-svg" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="headStroke" x1="160" y1="100" x2="560" y2="580" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#67E8F9"/>
+                        <stop offset="0.5" stop-color="#60A5FA"/>
+                        <stop offset="1" stop-color="#8B5CF6"/>
+                    </linearGradient>
+                    <radialGradient id="brainGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(350 250) rotate(90) scale(140 170)">
+                        <stop stop-color="#67E8F9" stop-opacity="0.5"/>
+                        <stop offset="1" stop-color="#67E8F9" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <ellipse cx="350" cy="250" rx="104" ry="118" fill="url(#brainGlow)" class="brain-core"/>
+                <path d="M337 92C279 95 223 126 192 180C156 242 159 327 203 390C223 418 235 454 236 490L236 572C236 592 252 608 272 608H430C450 608 466 592 466 572V489C466 451 480 419 503 390C545 337 552 260 520 198C487 132 415 89 337 92Z" stroke="url(#headStroke)" stroke-width="4.5" stroke-linecap="round" class="head-outline"/>
+                <path d="M285 223C304 196 336 180 369 181C401 182 432 198 452 225" stroke="url(#headStroke)" stroke-opacity="0.72" stroke-width="3" stroke-linecap="round" class="brain-arc"/>
+                <path d="M270 270C296 241 331 227 369 228C409 229 445 245 470 274" stroke="url(#headStroke)" stroke-opacity="0.68" stroke-width="3" stroke-linecap="round" class="brain-arc brain-arc-delay"/>
+                <path d="M282 318C308 295 338 285 370 286C402 287 432 298 457 320" stroke="url(#headStroke)" stroke-opacity="0.58" stroke-width="3" stroke-linecap="round" class="brain-arc brain-arc-slow"/>
+                <path d="M263 214C236 259 229 308 242 359" stroke="url(#headStroke)" stroke-opacity="0.46" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M440 212C468 255 477 305 463 357" stroke="url(#headStroke)" stroke-opacity="0.46" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M320 236L382 224L423 268L374 303L303 302L320 236Z" stroke="#7DD3FC" stroke-opacity="0.24" stroke-width="1.5" class="neural-link"/>
+                <path d="M303 302L382 224" stroke="#93C5FD" stroke-opacity="0.18" stroke-width="1.4" class="neural-link neural-link-delay"/>
+                <path d="M320 236L374 303" stroke="#A5F3FC" stroke-opacity="0.16" stroke-width="1.4" class="neural-link neural-link-slow"/>
+                <circle cx="320" cy="236" r="7" fill="#67E8F9" fill-opacity="0.8" class="neural-node"/>
+                <circle cx="382" cy="224" r="6" fill="#93C5FD" fill-opacity="0.78" class="neural-node neural-node-delay"/>
+                <circle cx="423" cy="268" r="5.5" fill="#C4B5FD" fill-opacity="0.74" class="neural-node neural-node-slow"/>
+                <circle cx="303" cy="302" r="5.5" fill="#67E8F9" fill-opacity="0.74" class="neural-node neural-node-delay"/>
+                <circle cx="374" cy="303" r="6.5" fill="#A5F3FC" fill-opacity="0.78" class="neural-node neural-node-slow"/>
+            </svg>
+            <div class="access-bg-scan-line"></div>
+        </div>
+    </div>
+    {% set page_content %}{% block content %}{% endblock %}{% endset %}
+    {% if session.get("admin_logged_in") or session.get("student_logged_in") %}
+    <div class="app-shell">
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-brand-wrap">
+                <a class="sidebar-brand" href="{{ url_for('dashboard' if session.get('admin_logged_in') else 'student_dashboard') }}">
+                    <span class="sidebar-brand-icon"><i class="bi bi-stars"></i></span>
+                    <span>
+                        <strong>Smart Attendance System</strong>
+                        <small>{{ 'Admin Workspace' if session.get('admin_logged_in') else 'Student Workspace' }}</small>
+                    </span>
+                </a>
+                <button class="sidebar-close-btn d-lg-none" id="sidebarCloseBtn" type="button" aria-label="Close navigation">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section-label">{{ 'Admin Menu' if session.get('admin_logged_in') else 'Student Menu' }}</p>
+                <nav class="sidebar-nav">
+                    {% if session.get("admin_logged_in") %}
+                    <a class="sidebar-link {% if request.endpoint == 'dashboard' %}is-active{% endif %}" href="{{ url_for('dashboard') }}">
+                        <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_control_panel' %}is-active{% endif %}" href="{{ url_for('admin_control_panel') }}">
+                        <i class="bi bi-sliders"></i><span>Control Panel</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint in ['registered_students', 'register_student'] %}is-active{% endif %}" href="{{ url_for('registered_students') }}">
+                        <i class="bi bi-people-fill"></i><span>Students</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'register_student' %}is-active{% endif %}" href="{{ url_for('register_student') }}">
+                        <i class="bi bi-person-plus-fill"></i><span>Register Student</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_sessions' %}is-active{% endif %}" href="{{ url_for('admin_sessions') }}">
+                        <i class="bi bi-calendar2-week-fill"></i><span>Class Sessions</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_analytics' %}is-active{% endif %}" href="{{ url_for('admin_analytics') }}">
+                        <i class="bi bi-bar-chart-fill"></i><span>Attendance Analytics</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_live_monitor' %}is-active{% endif %}" href="{{ url_for('admin_live_monitor') }}">
+                        <i class="bi bi-broadcast-pin"></i><span>Live Session Monitor</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_overrides' %}is-active{% endif %}" href="{{ url_for('admin_overrides') }}">
+                        <i class="bi bi-shield-check"></i><span>Temporary Override Management</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_holidays' %}is-active{% endif %}" href="{{ url_for('admin_holidays') }}">
+                        <i class="bi bi-calendar-event-fill"></i><span>Holiday Management</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'admin_reports' %}is-active{% endif %}" href="{{ url_for('admin_reports') }}">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i><span>Reports</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint in ['admin_settings', 'email_settings', 'camera_debug'] %}is-active{% endif %}" href="{{ url_for('admin_settings') }}">
+                        <i class="bi bi-sliders2-vertical"></i><span>Settings</span>
+                    </a>
+                    {% else %}
+                    <a class="sidebar-link {% if request.endpoint == 'student_dashboard' %}is-active{% endif %}" href="{{ url_for('student_dashboard') }}">
+                        <i class="bi bi-mortarboard-fill"></i><span>Student Dashboard</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'student_self_attendance' %}is-active{% endif %}" href="{{ url_for('student_self_attendance') }}">
+                        <i class="bi bi-person-check-fill"></i><span>Self Attendance</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'student_schedule_page' %}is-active{% endif %}" href="{{ url_for('student_schedule_page') }}">
+                        <i class="bi bi-calendar3-week-fill"></i><span>Weekly Class Schedule</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'student_history_page' %}is-active{% endif %}" href="{{ url_for('student_history_page') }}">
+                        <i class="bi bi-clock-history"></i><span>Class Session History</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'student_analytics_page' %}is-active{% endif %}" href="{{ url_for('student_analytics_page') }}">
+                        <i class="bi bi-pie-chart-fill"></i><span>Personal Analytics</span>
+                    </a>
+                    <a class="sidebar-link {% if request.endpoint == 'student_corrections_page' %}is-active{% endif %}" href="{{ url_for('student_corrections_page') }}">
+                        <i class="bi bi-journal-check"></i><span>Correction Requests</span>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="sidebar-footer-actions">
+                {% if session.get("admin_logged_in") %}
+                <a class="sidebar-link sidebar-link-secondary" href="{{ url_for('student_portal_access') }}">
+                    <i class="bi bi-columns-gap"></i><span>Portal Access</span>
+                </a>
+                {% endif %}
+                <a class="sidebar-link sidebar-link-logout" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <div class="app-main-shell">
+            <header class="app-topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="sidebar-toggle-btn d-lg-none" id="sidebarToggleBtn" type="button" aria-label="Open navigation">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <p class="badge-text mb-1">{{ 'ADMIN PORTAL' if session.get('admin_logged_in') else 'STUDENT PORTAL' }}</p>
+                        <h2 class="topbar-title mb-0">{% block shell_title %}{% block topbar_title %}{{ self.title() }}{% endblock %}{% endblock %}</h2>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Toggle dark mode">Light Mode</button>
+                </div>
+            </header>
+
+            <main class="app-main-content">
+                <div class="toast-shell">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="toast-container position-fixed top-0 end-0 p-3">
+                                {% for category, message in messages %}
+                                <div class="toast notification-toast flash-toast flash-message text-bg-dark border-0 mb-3"
+                                     role="alert"
+                                     aria-live="assertive"
+                                     aria-atomic="true"
+                                     data-category="{{ category }}"
+                                     data-bs-autohide="true"
+                                     data-bs-delay="4500">
+                                    <div class="toast-header">
+                                        <span class="toast-status-dot toast-{{ category }}"></span>
+                                        <strong class="me-auto">{{ category|title }}</strong>
+                                        <small>Now</small>
+                                        <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                    <div class="toast-body">{{ message }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                {{ page_content }}
+            </main>
+
+            <footer class="app-footer">
+                <div class="container-fluid px-0">
+                    <p class="mb-0">&copy; Developed by Soumyadip Bhattacharya, contact me : Soumyadipbh369@gmail.com</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    {% else %}
+    <nav class="navbar navbar-expand-lg app-navbar">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="{{ url_for('home') }}">Smart Attendance System</a>
+            <div class="navbar-nav ms-auto gap-2 align-items-lg-center">
+                <a class="nav-link text-white" href="{{ url_for('access_portal') }}">Access Portal</a>
+                <a class="nav-link text-white" href="{{ url_for('login') }}">Admin Login</a>
+                <a class="nav-link text-white" href="{{ url_for('student_login') }}">Student Login</a>
+                <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Toggle dark mode">Light Mode</button>
+            </div>
+        </div>
+    </nav>
+    <main class="public-main">
+        <div class="container py-3">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="toast-container position-fixed top-0 end-0 p-3">
+                        {% for category, message in messages %}
+                        <div class="toast notification-toast flash-toast flash-message text-bg-dark border-0 mb-3"
+                             role="alert"
+                             aria-live="assertive"
+                             aria-atomic="true"
+                             data-category="{{ category }}"
+                             data-bs-autohide="true"
+                             data-bs-delay="4500">
+                            <div class="toast-header">
+                                <span class="toast-status-dot toast-{{ category }}"></span>
+                                <strong class="me-auto">{{ category|title }}</strong>
+                                <small>Now</small>
+                                <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">{{ message }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+        {{ page_content }}
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <p class="mb-0">&copy; Developed by Soumyadip Bhattacharya, contact me : Soumyadipbh369@gmail.com</p>
+        </div>
+    </footer>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

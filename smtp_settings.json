@@ -1,0 +1,8 @@
+{
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "username": "soumyadipbh369@gmail.com",
+  "password": "cmpg nbgt brpk orpq",
+  "sender": "soumyadipbh369@gmail.com",
+  "use_tls": true
+}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block content %}
+<div class="container-fluid page-shell py-5">
+    <div class="container">
+        <div class="row justify-content-center g-4">
+            <div class="col-lg-6">
+                <div class="panel-card login-card login-access-card biometric-login-card reveal-section">
+                    <div class="login-ambient-orb login-ambient-orb-one"></div>
+                    <div class="login-ambient-orb login-ambient-orb-two"></div>
+                    <div class="hero-scan-grid login-scan-grid"></div>
+                    <div class="hero-scan-ring hero-scan-ring-one"></div>
+                    <div class="hero-scan-ring hero-scan-ring-two"></div>
+                    <div class="hero-scan-line login-scan-line"></div>
+                    <p class="badge-text mb-2">ADMIN ACCESS</p>
+                    <h1 class="main-title mb-2">Admin Login</h1>
+                    <p class="sub-title mb-4">Use your admin email and password to enter the {{ assistant_name }}.</p>
+
+                    <form method="post" class="form-grid login-form-grid">
+                        <div>
+                            <label class="form-label">Admin Email</label>
+                            <input type="email" name="email" class="form-control form-input" placeholder="Enter admin email" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control form-input" placeholder="Enter password" required>
+                        </div>
+                        <button class="btn send-btn w-100 mt-2" type="submit">Login</button>
+                    </form>
+
+                    <div class="student-access-callout mt-4">
+                        <p class="meta-line mb-3">Need the student page instead?</p>
+                        <a class="btn btn-outline-light w-100 student-access-btn" href="{{ url_for('student_login') }}">Go To Student Login</a>
+                    </div>
+
+                    <p class="meta-line mt-4 mb-0 login-helper-text">Default admin email: {{ admin_email_hint }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

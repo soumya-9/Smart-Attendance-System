@@ -1,0 +1,39 @@
+<div class="panel-card h-100 reveal-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h3 class="panel-title mb-0">Correction Requests</h3>
+            <span class="meta-line">Request a review if your marked status needs correction.</span>
+        </div>
+        <span class="legend-chip legend-upcoming">Student Request Flow</span>
+    </div>
+
+    <form method="post" action="{{ url_for('student_correction_request') }}" class="form-grid mb-3">
+        <select name="session_id" class="form-select form-input" required>
+            <option value="">Select session</option>
+            {% for item in student_summary.history %}
+            <option value="{{ item.session_id }}">{{ item.date }} | {{ item.subject_name }} | {{ item.status }}</option>
+            {% endfor %}
+        </select>
+        <input name="attendance_record_id" class="form-control form-input" placeholder="Attendance record ID (optional)">
+        <select name="requested_status" class="form-select form-input">
+            <option value="Present">Present</option>
+            <option value="Late">Late</option>
+        </select>
+        <textarea name="reason" class="form-control form-input" rows="3" placeholder="Why should attendance be corrected?" required></textarea>
+        <button class="btn send-btn" type="submit">Submit Request</button>
+    </form>
+
+    {% if correction_requests %}
+    <div class="student-list">
+        {% for item in correction_requests %}
+        <div class="student-item">
+            <h4>{{ item.subject_name }} | {{ item.session_date }}</h4>
+            <p>{{ item.requested_status }} | {{ item.status }}</p>
+            <p>{{ item.reason }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="meta-line mb-0">No correction requests submitted yet.</p>
+    {% endif %}
+</div>
