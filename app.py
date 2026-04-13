@@ -128,6 +128,19 @@ configure_console_encoding()
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
 os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
+
+def resolve_deepface_detector_backend():
+    configured_backend = str(os.getenv("DEEPFACE_DETECTOR_BACKEND", "")).strip().lower()
+    if configured_backend:
+        return configured_backend
+
+    cv2_data = getattr(cv2, "data", None)
+    if cv2_data and getattr(cv2_data, "haarcascades", ""):
+        return "opencv"
+
+    return "skip"
+
+
 try:
     from deepface import DeepFace
 except Exception as import_error:
@@ -159,11 +172,12 @@ ASSISTANT_NAME = "Smart Attendance System"
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 5000
 DISPLAY_HOST = "127.0.0.1"
-DETECTOR_BACKEND = "opencv"
+DETECTOR_BACKEND = resolve_deepface_detector_backend()
 RECOGNITION_MODEL_NAME = os.getenv("DEEPFACE_RECOGNITION_MODEL", "SFace")
 WEIGHTS_DIR = Path.home() / ".deepface" / "weights"
 SUPPORTED_IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 MAX_STUDENT_IMAGE_BYTES = 5 * 1024 * 1024
+MAX_CANDIDATE_IMAGES_PER_STUDENT = max(1, int(os.getenv("MAX_CANDIDATE_IMAGES_PER_STUDENT", "4")))
 MAX_ATTENDANCE_DISTANCE_METERS = 60.0
 GPS_TRACKING_OUT_OF_RANGE_LIMIT = 3
 GPS_MAX_READING_AGE_SECONDS = 20.0
@@ -592,9 +606,37 @@ def build_face_recognition_encodings(image_path):
     return all_encodings
 
 
+def is_allowed_student_media_path(path_value):
+    if not path_value:
+        return False
+
+    try:
+        target_path = Path(path_value).resolve()
+    except OSError:
+        return False
+
+    allowed_directories = (KNOWN_FACES_DIR.resolve(), PROOF_SNAPSHOTS_DIR.resolve())
+    return any(directory in target_path.parents for directory in allowed_directories)
+
+
+def get_engine_sample_image():
+    for student_name, image_path in known_faces.items():
+        candidates = collect_candidate_images_for_student(student_name, image_path)
+        if candidates:
+            return candidates[0]
+    return ""
+
+
+def resolve_preferred_student_image(name, image_path):
+    candidates = collect_candidate_images_for_student(name, image_path)
+    return candidates[0] if candidates else ""
+
+
 def collect_candidate_images_for_student(name, image_path):
     candidates = []
     seen = set()
+    image_stem = sanitize_filename(Path(str(image_path or "")).stem).replace("-", "_")
+    enrollment_hint = image_stem.split("_", 1)[0] if image_stem else ""
 
     def add_candidate(path_value):
         if not path_value:
@@ -613,22 +655,41 @@ def collect_candidate_images_for_student(name, image_path):
     normalized_name = sanitize_filename(name).replace("-", "_")
     first_name = sanitize_filename(first_name_token(name)).replace("-", "_")
 
-    for file_path in KNOWN_FACES_DIR.iterdir():
-        if file_path.suffix.lower() not in SUPPORTED_IMAGE_SUFFIXES:
-            continue
+    for directory in (KNOWN_FACES_DIR, PROOF_SNAPSHOTS_DIR):
+        for file_path in directory.iterdir():
+            if file_path.suffix.lower() not in SUPPORTED_IMAGE_SUFFIXES:
+                continue
 
-        stem = sanitize_filename(file_path.stem).replace("-", "_")
-        if normalized_name and normalized_name in stem:
-            add_candidate(file_path)
-            continue
+            stem = sanitize_filename(file_path.stem).replace("-", "_")
+            if enrollment_hint and stem.startswith(enrollment_hint):
+                add_candidate(file_path)
+                continue
 
-        if len(all_students) == 1 and first_name and stem.endswith(first_name):
-            add_candidate(file_path)
+            if normalized_name and normalized_name in stem:
+                add_candidate(file_path)
+                continue
+
+            if len(all_students) == 1 and first_name and first_name in stem:
+                add_candidate(file_path)
 
     if len(all_students) == 1:
-        for file_path in KNOWN_FACES_DIR.iterdir():
-            if file_path.suffix.lower() in SUPPORTED_IMAGE_SUFFIXES:
-                add_candidate(file_path)
+        for directory in (KNOWN_FACES_DIR, PROOF_SNAPSHOTS_DIR):
+            for file_path in directory.iterdir():
+                if file_path.suffix.lower() in SUPPORTED_IMAGE_SUFFIXES:
+                    add_candidate(file_path)
+
+    def candidate_priority(path_value):
+        path = Path(path_value)
+        priority = 0 if KNOWN_FACES_DIR.resolve() in path.parents else 1
+        try:
+            timestamp = -path.stat().st_mtime
+        except OSError:
+            timestamp = 0
+        return (priority, timestamp, len(path.name))
+
+    candidates.sort(key=candidate_priority)
+    if len(candidates) > MAX_CANDIDATE_IMAGES_PER_STUDENT:
+        candidates = candidates[:MAX_CANDIDATE_IMAGES_PER_STUDENT]
 
     return candidates
 
@@ -723,7 +784,7 @@ def load_known_faces():
 
 
 def make_engine_state():
-    sample_image = next(iter(known_faces.values()), "")
+    sample_image = get_engine_sample_image()
     detector_backend = DETECTOR_BACKEND if face_cascade is not None else "skip"
     return {
         "deepface_imported": DeepFace is not None,
@@ -886,7 +947,7 @@ def ensure_emotion_engine_ready(force=False):
     if DeepFace is None:
         return False
 
-    sample_image = next(iter(known_faces.values()), "") or ENGINE_STATE.get("sample_image", "")
+    sample_image = get_engine_sample_image() or ENGINE_STATE.get("sample_image", "")
     if not sample_image:
         return False
 
@@ -972,8 +1033,13 @@ def refresh_runtime_state(rebuild_engines=False):
         ENGINE_STATE["startup_message"] = "AI engines are starting in the background. The website is ready."
     if rebuild_engines and known_faces and DeepFace is not None:
         ensure_emotion_engine_ready(force=not ENGINE_STATE.get("emotion_ready"))
-    if rebuild_engines and known_faces and face_recognition is not None:
-        ensure_fallback_recognition_ready(force=not ENGINE_STATE.get("recognition_ready"))
+    if (
+        rebuild_engines
+        and known_faces
+        and face_recognition is not None
+        and not ENGINE_STATE.get("recognition_ready")
+    ):
+        ensure_fallback_recognition_ready(force=True)
 
 
 def _background_bootstrap_worker():
@@ -6111,13 +6177,12 @@ def student_photo(student_id):
     if not student:
         abort(404)
 
-    image_path = student.get("image_path")
+    image_path = resolve_preferred_student_image(student.get("name"), student.get("image_path"))
     if not image_path:
         abort(404)
 
     target_path = Path(image_path).resolve()
-    known_faces_dir = KNOWN_FACES_DIR.resolve()
-    if known_faces_dir not in target_path.parents or not target_path.exists():
+    if not target_path.exists() or not is_allowed_student_media_path(target_path):
         abort(404)
 
     return send_file(target_path)

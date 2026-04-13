@@ -1,13 +1,21 @@
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $projectRoot
 
-$pythonExe = "C:\Users\soumy\AppData\Local\Programs\Python\Python310\python.exe"
+$preferredPython = "C:\Users\soumy\AppData\Local\Programs\Python\Python310\python.exe"
+$pythonCommand = $null
+$pythonArgs = @()
 
-if (-not (Test-Path $pythonExe)) {
-    Write-Host "Python was not found at:`n$pythonExe" -ForegroundColor Red
-    Write-Host "Update start_app.ps1 with the correct Python path and try again."
+if (Test-Path $preferredPython) {
+    $pythonCommand = $preferredPython
+} elseif (Get-Command py -ErrorAction SilentlyContinue) {
+    $pythonCommand = "py"
+    $pythonArgs = @("-3.10")
+} elseif (Get-Command python -ErrorAction SilentlyContinue) {
+    $pythonCommand = "python"
+} else {
+    Write-Host "Python was not found. Install Python 3.10+ or update start_app.ps1." -ForegroundColor Red
     exit 1
 }
 
 Write-Host "Starting Flask app from: $projectRoot"
-& $pythonExe "$projectRoot\app.py"
+& $pythonCommand @pythonArgs "$projectRoot\app.py"

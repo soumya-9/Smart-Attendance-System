@@ -3,13 +3,28 @@ setlocal
 
 cd /d "%~dp0"
 
-set "PYTHON_EXE=C:\Users\soumy\AppData\Local\Programs\Python\Python310\python.exe"
+set "PREFERRED_PYTHON=C:\Users\soumy\AppData\Local\Programs\Python\Python310\python.exe"
+set "PYTHON_CMD="
+set "PYTHON_ARGS="
 
-if not exist "%PYTHON_EXE%" (
-    echo Python was not found at:
-    echo %PYTHON_EXE%
-    echo.
-    echo Update start_app.cmd with the correct Python path and try again.
+if exist "%PREFERRED_PYTHON%" (
+    set "PYTHON_CMD=%PREFERRED_PYTHON%"
+) else (
+    where py >nul 2>nul
+    if not errorlevel 1 (
+        set "PYTHON_CMD=py"
+        set "PYTHON_ARGS=-3.10"
+    ) else (
+        where python >nul 2>nul
+        if not errorlevel 1 (
+            set "PYTHON_CMD=python"
+        )
+    )
+)
+
+if not defined PYTHON_CMD (
+    echo Python was not found.
+    echo Install Python 3.10+ or update start_app.cmd with the correct interpreter path.
     pause
     exit /b 1
 )
@@ -18,7 +33,7 @@ echo Starting Flask app from:
 echo %CD%
 echo.
 
-"%PYTHON_EXE%" app.py
+"%PYTHON_CMD%" %PYTHON_ARGS% app.py
 
 if errorlevel 1 (
     echo.
