@@ -8,4 +8,5 @@ venv/
 env/
 .vscode/
 .idea/
-known_faces/
+known_faces/*
+!known_faces/.gitkeep
