@@ -8,3 +8,4 @@ venv/
 env/
 .vscode/
 .idea/
+known_faces/
