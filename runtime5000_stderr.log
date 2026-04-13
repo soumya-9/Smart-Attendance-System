@@ -1,9 +1,0 @@
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1775303868.399031   11808 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1775303925.488659   11808 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-WARNING:tensorflow:From C:\Users\soumy\AppData\Local\Programs\Python\Python310\lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
-
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
