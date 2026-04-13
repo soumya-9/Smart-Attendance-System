@@ -1,0 +1,179 @@
+<div class="panel-card attendance-capture-panel reveal-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div>
+            <h3 class="panel-title mb-1">Self Attendance</h3>
+            {% if session_context.current_session %}
+            <p class="meta-line mb-0">Active class: {{ session_context.current_session.subject_name }} | {{ session_context.current_session.start_time[:5] }} - {{ session_context.current_session.end_time[:5] }} | Status: {{ session_context.current_session.session_status }}</p>
+            {% elif session_context.upcoming_session %}
+            <p class="meta-line mb-0">Upcoming class: {{ session_context.upcoming_session.subject_name }} on {{ session_context.upcoming_session.session_date }} at {{ session_context.upcoming_session.start_time[:5] }}. Attendance opens automatically in the scheduled window unless the admin delays or cancels it.</p>
+            {% else %}
+            <p class="meta-line mb-0">No active class is currently available for attendance.</p>
+            {% endif %}
+        </div>
+        {% if student_summary.is_low_attendance %}
+        <span class="legend-chip legend-absent">Warning: below {{ student_summary.low_attendance_threshold }}%</span>
+        {% endif %}
+    </div>
+    {% if portal_focus_session %}
+    <div class="countdown-shell biometric-countdown-shell mb-3"
+         data-countdown-card
+         data-control-target="markStudentAttendanceBtn"
+         data-session-id="{{ portal_focus_session.id or '' }}"
+         data-session-status="{{ portal_focus_session.session_status }}"
+         data-open-time="{{ portal_focus_session.attendance_open_time }}"
+         data-close-time="{{ portal_focus_session.late_close_time }}"
+         data-start-time="{{ portal_focus_session.start_time }}"
+         data-end-time="{{ portal_focus_session.end_time }}"
+         data-session-date="{{ portal_focus_session.session_date }}"
+         data-attendance-marked="{{ 'true' if tracking_snapshot.attendance_status else 'false' }}"
+         data-attendance-workflow="{{ tracking_snapshot.attendance_status or '' }}"
+         data-session-phase="{{ tracking_snapshot.phase if portal_focus_session else '' }}"
+         data-attendance-seconds-left="{{ tracking_snapshot.attendance_seconds_left if tracking_snapshot.attendance_seconds_left is not none else '' }}"
+         data-gps-seconds-left="{{ tracking_snapshot.gps_seconds_left if tracking_snapshot.gps_seconds_left is not none else '' }}"
+         data-tracking-status="{{ tracking_snapshot.tracking_state or '' }}"
+         data-tracking-expires-at="{{ tracking_snapshot.tracking_expires_at or '' }}">
+        <div class="countdown-shell-header">
+            <div>
+                <p class="badge-text mb-1">LIVE ATTENDANCE WINDOW</p>
+                <h4 class="panel-title h5 mb-1">{{ portal_focus_session.subject_name }}</h4>
+                <p class="meta-line mb-0">{{ portal_focus_session.session_date }} | {{ portal_focus_session.start_time[:5] }} - {{ portal_focus_session.end_time[:5] }} | Room: {{ portal_focus_session.room_name or portal_focus_session.class_name }}</p>
+            </div>
+            <div class="countdown-badge" data-countdown-badge>Upcoming</div>
+        </div>
+        <div class="countdown-text" data-countdown-text>
+            {% if tracking_snapshot.phase == 'ATTENDANCE_OPEN' %}
+            Attendance closes in:
+            {% if tracking_snapshot.attendance_seconds_left is not none %}
+            {{ '%02d:%02d:%02d'|format((tracking_snapshot.attendance_seconds_left // 3600), ((tracking_snapshot.attendance_seconds_left % 3600) // 60), (tracking_snapshot.attendance_seconds_left % 60)) }}
+            {% else %}
+            00:00:00
+            {% endif %}
+            {% elif tracking_snapshot.phase == 'GPS_TRACKING' and tracking_snapshot.gps_seconds_left is not none %}
+            Tracking Time Left:
+            {{ '%02d:%02d:%02d'|format((tracking_snapshot.gps_seconds_left // 3600), ((tracking_snapshot.gps_seconds_left % 3600) // 60), (tracking_snapshot.gps_seconds_left % 60)) }}
+            {% elif tracking_snapshot.phase == 'UPCOMING' and portal_focus_session.attendance_open_time %}
+            Attendance opens at {{ portal_focus_session.attendance_open_time[:5] }}
+            {% elif tracking_snapshot.attendance_status %}
+            Attendance temporarily marked. GPS tracking will start after the attendance window closes.
+            {% elif session_context.current_session %}
+            Attendance window is live right now.
+            {% else %}
+            Waiting for the next attendance window.
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    <div id="studentTrackingAlert"
+         class="tracking-alert {% if tracking_snapshot.attendance_status == 'CANCELLED' %}tracking-alert-cancelled{% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}tracking-alert-success{% else %}tracking-alert-muted{% endif %}"
+         {% if not tracking_snapshot.attendance_status %}hidden{% endif %}>
+        {{ tracking_snapshot.message }}
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="video-wrapper mb-3">
+                <video id="studentAttendanceVideo" class="video-stream" autoplay playsinline muted></video>
+                <div class="video-biometric-overlay" aria-hidden="true">
+                    <span class="face-node face-node-top"></span>
+                    <span class="face-node face-node-left"></span>
+                    <span class="face-node face-node-right"></span>
+                    <span class="face-node face-node-bottom"></span>
+                    <span class="scan-corners scan-corners-top-left"></span>
+                    <span class="scan-corners scan-corners-top-right"></span>
+                    <span class="scan-corners scan-corners-bottom-left"></span>
+                    <span class="scan-corners scan-corners-bottom-right"></span>
+                </div>
+                <canvas id="studentAttendanceCanvas" width="480" height="360" style="display:none;"></canvas>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn send-btn" id="startStudentAttendanceCameraBtn" type="button">Start Camera</button>
+                <button class="btn quick-btn" id="stopStudentAttendanceCameraBtn" type="button">Stop Camera</button>
+                <button class="btn quick-btn" id="captureAnalyzeStudentAttendanceBtn" type="button">Capture &amp; Analyze</button>
+                <button class="btn quick-btn" id="markStudentAttendanceBtn" type="button" data-default-label="Mark Attendance" data-closed-label="Attendance Is Closed Now" data-analysis-ready="false" data-session-id="{{ portal_focus_session.id if portal_focus_session else '' }}">
+                    {% if tracking_snapshot.attendance_status in ['MARKED_PENDING_TRACKING', 'TRACKING_ACTIVE', 'PROVISIONAL'] %}Temporarily Marked{% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}Attendance Marked{% else %}Mark Attendance{% endif %}
+                </button>
+            </div>
+            <div class="attendance-success-burst" id="attendanceSuccessBurst" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="result-box" id="studentAttendanceResultBox">
+                <p class="mb-1"><strong>Status:</strong> <span id="studentAttendanceStatus">Waiting for camera and analysis.</span></p>
+                <p class="mb-1"><strong>Emotion:</strong> <span id="studentAttendanceEmotion">Not analyzed yet</span></p>
+                <p class="mb-1"><strong>Liveness:</strong> <span id="studentAttendanceLiveness">Not checked yet</span></p>
+                <p class="mb-1"><strong>GPS:</strong> <span id="studentAttendanceGps">Not captured yet</span></p>
+                <p class="mb-1"><strong>Subject:</strong> <span id="studentAttendanceSubject">{{ portal_focus_session.subject_name if portal_focus_session else 'N/A' }}</span></p>
+                <p class="mb-1"><strong>Distance:</strong> <span id="studentAttendanceDistance">N/A</span></p>
+                <p class="mb-1"><strong>Attendance:</strong> <span id="studentAttendanceWorkflowStatus">{% if tracking_snapshot.attendance_status in ['MARKED_PENDING_TRACKING', 'TRACKING_ACTIVE', 'PROVISIONAL'] %}Temporarily Marked{% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}Attendance Marked Successfully{% elif tracking_snapshot.attendance_status in ['CANCELLED', 'REJECTED'] %}Attendance Cancelled{% elif tracking_snapshot.attendance_status %}{{ tracking_snapshot.attendance_status }}{% else %}Not Marked{% endif %}</span></p>
+                <p class="mb-1"><strong>Tracker:</strong> <span id="studentAttendanceTrackingStatus">{% if tracking_snapshot.tracking_state == 'Waiting For Attendance Window To Close' %}Waiting for attendance window to close{% elif tracking_snapshot.tracking_state == 'Tracking Active' %}Running{% elif tracking_snapshot.tracking_state == 'Tracking Completed' %}Completed{% elif tracking_snapshot.tracking_state == 'Attendance Cancelled' %}Failed{% elif current_session_record %}{{ tracking_snapshot.tracking_state }}{% else %}Not Started{% endif %}</span></p>
+                <p class="mb-0"><strong>Tracking Time Left:</strong> <span id="studentAttendanceTrackingTimer">{% if tracking_snapshot.tracking_state == 'Tracking Active' and tracking_snapshot.remaining_seconds is not none %}{{ '%02d:%02d:%02d'|format((tracking_snapshot.remaining_seconds // 3600), ((tracking_snapshot.remaining_seconds % 3600) // 60), (tracking_snapshot.remaining_seconds % 60)) }}{% elif tracking_snapshot.tracking_state == 'Waiting For Attendance Window To Close' and tracking_snapshot.tracking_begins_at %}Starts after attendance window closes{% else %}N/A{% endif %}</span></p>
+            </div>
+            <div class="tracking-status-card mt-3"
+                 id="studentTrackingStatusCard"
+                 data-tracking-card
+                 data-status-endpoint="{{ url_for('student_tracking_status_api') }}"
+                 data-heartbeat-endpoint="{{ url_for('student_tracking_heartbeat_api') }}"
+                 data-focus-session-id="{{ portal_focus_session.id if portal_focus_session else '' }}"
+                 data-initial-tracking='{{ tracking_snapshot | tojson | safe }}'>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <div>
+                        <p class="badge-text mb-1">POST-ATTENDANCE GPS TRACKER</p>
+                        <h4 class="panel-title h5 mb-1" id="studentTrackingSessionLabel">{{ tracking_snapshot.subject_name or (portal_focus_session.subject_name if portal_focus_session else 'Waiting For Attendance') }}</h4>
+                        <p class="meta-line mb-0" id="studentTrackingMeta">
+                            {% if tracking_snapshot.class_name or (portal_focus_session and portal_focus_session.class_name) %}
+                            {{ tracking_snapshot.class_name or portal_focus_session.class_name }}
+                            {% else %}
+                            Tracking starts only after attendance is marked during the attendance window.
+                            {% endif %}
+                        </p>
+                    </div>
+                    <span class="legend-chip" id="studentTrackingBadge">
+                        {% if tracking_snapshot.attendance_status in ['MARKED_PENDING_TRACKING', 'TRACKING_ACTIVE', 'PROVISIONAL'] %}
+                        Temporarily Marked
+                        {% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}
+                        Attendance Marked Successfully
+                        {% elif tracking_snapshot.attendance_status in ['CANCELLED', 'REJECTED'] %}
+                        Attendance Cancelled
+                        {% else %}
+                        Not Marked
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="tracking-status-grid">
+                    <div class="tracking-status-item">
+                        <strong>Attendance Status</strong>
+                        <span id="studentTrackingStatusText">
+                            {% if tracking_snapshot.attendance_status in ['MARKED_PENDING_TRACKING', 'TRACKING_ACTIVE', 'PROVISIONAL'] %}
+                            Temporarily Marked
+                            {% elif tracking_snapshot.attendance_status in ['FINALIZED', 'FINAL'] %}
+                            Attendance Marked Successfully
+                            {% elif tracking_snapshot.attendance_status in ['CANCELLED', 'REJECTED'] %}
+                            Attendance Cancelled
+                            {% else %}
+                            Not Marked
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="tracking-status-item">
+                        <strong>Tracker State</strong>
+                        <span id="studentTrackingStateText">{% if tracking_snapshot.tracking_state == 'Waiting For Attendance Window To Close' %}Waiting for attendance window to close{% elif tracking_snapshot.tracking_state == 'Tracking Active' %}Running{% elif tracking_snapshot.tracking_state == 'Tracking Completed' %}Completed{% elif tracking_snapshot.tracking_state == 'Attendance Cancelled' %}Failed{% elif current_session_record %}{{ tracking_snapshot.tracking_state }}{% else %}Not Started{% endif %}</span>
+                    </div>
+                    <div class="tracking-status-item">
+                        <strong>Tracking Time Left</strong>
+                        <span id="studentTrackingCountdown">{% if tracking_snapshot.tracking_state == 'Tracking Active' and tracking_snapshot.remaining_seconds is not none %}{{ '%02d:%02d:%02d'|format((tracking_snapshot.remaining_seconds // 3600), ((tracking_snapshot.remaining_seconds % 3600) // 60), (tracking_snapshot.remaining_seconds % 60)) }}{% elif tracking_snapshot.tracking_state == 'Waiting For Attendance Window To Close' and tracking_snapshot.tracking_begins_at %}Starts after attendance window closes{% else %}N/A{% endif %}</span>
+                    </div>
+                    <div class="tracking-status-item">
+                        <strong>Distance</strong>
+                        <span id="studentTrackingDistance">{% if tracking_snapshot.distance_meters is not none %}{{ tracking_snapshot.distance_meters }} m{% else %}N/A{% endif %}</span>
+                    </div>
+                    <div class="tracking-status-item">
+                        <strong>Min GPS Range</strong>
+                        <span id="studentTrackingMinRange">{% if tracking_snapshot.allowed_radius_meters is not none %}{{ tracking_snapshot.allowed_radius_meters }} m{% else %}N/A{% endif %}</span>
+                    </div>
+                </div>
+                <p class="meta-line mb-2 mt-3" id="studentTrackingMessage">{{ tracking_snapshot.message }}</p>
+                <p class="meta-line mb-0" id="studentTrackingTrackerMessage">{{ tracking_snapshot.tracking_message }}</p>
+            </div>
+        </div>
+    </div>
+</div>
